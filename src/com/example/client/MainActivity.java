@@ -36,7 +36,7 @@ public class MainActivity extends FragmentActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
 
-        new ChecAuthentication().execute("http://192.168.12.122:8002/chek/");
+        new ChecAuthentication().execute(URL.host + "/check/");
 	}
 
     @Override

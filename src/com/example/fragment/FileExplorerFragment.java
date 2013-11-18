@@ -1,5 +1,6 @@
 package com.example.fragment;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.widget.SimpleAdapter;
 import com.example.client.R;
 import com.example.client.SApplication;
 import com.example.client.URL;
+import com.example.common.FileHelper;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -31,6 +33,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,7 +81,10 @@ public class FileExplorerFragment extends Fragment {
                     currentPath = p;
                     new DirTask().execute(currentPath);
                 }else{
-                    String p = (String)item.get(NAME);
+                    String p = (String)item.get(PATH)  + (String)item.get(NAME);
+                    Log.i("info","name = " + p.toString());
+                    String[] param = {p, (String)item.get(PATH).toString(), (String)item.get(NAME)};
+                    new OpenFileTask().execute(param);
                 }
             }
         });
@@ -92,7 +99,7 @@ public class FileExplorerFragment extends Fragment {
             }
         });
 
-        dir = new String(URL.host) + "ls/?path=";
+        dir = new String(URL.host) + "/ls/?path=";
         return root;
     }
 
@@ -102,6 +109,8 @@ public class FileExplorerFragment extends Fragment {
         new DirTask().execute(currentPath);
     }
 
+
+    /* Dir */
     class DirTask extends AsyncTask<String, Void, Boolean> {
         private String responce;
 
@@ -192,5 +201,76 @@ public class FileExplorerFragment extends Fragment {
                 is_runing = false;
             }
         }
+    }
+
+    /* Open file */
+    class OpenFileTask extends AsyncTask<String, Void, Boolean> {
+        String responce = null;
+        ProgressDialog progressDialog = null;
+        @Override
+        protected void onPreExecute(){
+            Context context = getActivity();
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setMessage("please wait...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progressDialog.dismiss();
+            progressDialog.cancel();
+        }
+
+        @Override
+        protected Boolean doInBackground(String... file) {
+            HttpParams httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams,10000);
+            HttpConnectionParams.setSoTimeout(httpParams,10000);
+
+            DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
+            HttpGet httpGet = new HttpGet(URL.host + "/get_file/?file=" + file[0]);
+
+            HttpContext httpContext = new BasicHttpContext();
+            httpContext.setAttribute(ClientContext.COOKIE_STORE, SApplication.cookieStore);
+
+            try {
+                HttpResponse httpResponse = httpClient.execute(httpGet,httpContext);
+                Log.i("info", httpResponse.getFirstHeader("Content-type").toString());
+                Log.i("info", httpResponse.getFirstHeader("Content-length").toString());
+                byte[] _file_ = EntityUtils.toByteArray(httpResponse.getEntity());
+                File f = new File(get_cache_path(), file[2]);
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(_file_, 0, _file_.length);
+                fos.flush();
+                fos.close();
+                startActivity(FileHelper.openFileIntent(f));
+
+                /*Bitmap image = BitmapFactory.decodeByteArray( _file_, 0, _file_.length);
+                File f = new File(get_cache_path(), file[2]);
+                FileOutputStream fos = new FileOutputStream(f);
+                image.compress(Bitmap.CompressFormat.PNG, 90, fos);
+                startActivity(FileHelper.openFileIntent(f));*/
+
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+    }
+
+    private String get_cache_path(){
+        File cacheDir;
+        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)){
+            cacheDir=new File(android.os.Environment.getExternalStorageDirectory(),"Client");
+        }else {
+            cacheDir=getActivity().getCacheDir();
+        }
+
+        if(!cacheDir.exists())
+            cacheDir.mkdirs();
+        return cacheDir.getAbsolutePath();
     }
 }

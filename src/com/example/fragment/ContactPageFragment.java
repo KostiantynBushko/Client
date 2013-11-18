@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.client.R;
 import com.example.client.SApplication;
+import com.example.client.URL;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -112,7 +113,7 @@ public class ContactPageFragment extends Fragment {
                     Log.i("info", " **** Load more contact *** ");
                     if (!is_runing){
                         is_runing = true;
-                        new LoadContactTask().execute("http://192.168.12.122:8002/user_list/");
+                        new LoadContactTask().execute(URL.host + "/user_list/");
                     }
                 }
             }
@@ -154,7 +155,7 @@ public class ContactPageFragment extends Fragment {
         super.onStart();
         if (!is_runing){
             is_runing = true;
-            new LoadContactTask().execute("http://192.168.12.122:8002/user_list/");
+            new LoadContactTask().execute(URL.host + "/user_list/");
         }
     }
 

@@ -2,6 +2,7 @@ package com.example.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import com.example.client.MainActivity;
 import com.example.client.R;
 import com.example.client.SApplication;
+import com.example.client.URL;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -94,13 +96,23 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
             }
         });
 
+        icon.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                new DownloadImage().execute(URL.host + "/load/");
+                return true;
+            }
+        });
+
         Button upload = (Button)root.findViewById(R.id.upload);
         upload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new UploadImage().execute("http://192.168.12.122:8002/upload/");
+                new UploadImage().execute(URL.host + "/upload/");
             }
         });
+        new DownloadImage().execute(URL.host + "/load/");
+
         return root;
     }
 
@@ -144,17 +156,11 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
         super.onSaveInstanceState(outState);
     }
 
-    public void onActivityCreate(Bundle savedInstanceState) {
-        Log.i("info"," -- HomePageFragment [ onActivityCreate ] ");
-        super.onActivityCreated(savedInstanceState);
-    }
-
     @Override
     public void onResume(){
         Log.i("info"," -- HomePageFragment [ onResume ]");
         super.onResume();
-        new LoadUserData().execute("http://192.168.12.122:8002/user/");
-        new DownloadImage().execute("http://192.168.12.122:8002/load/");
+        new LoadUserData().execute(URL.host + "/user/");
     }
 
     @Override
@@ -164,10 +170,19 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            Log.i("info","LANDSCAPE");
+        }
+
+    }
+
+    @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.bSignOut:
-                new SignOutTask().execute("http://192.168.12.122:8002/logout/");
+                new SignOutTask().execute(URL.host + "/logout/");
                 break;
             default: break;
         }

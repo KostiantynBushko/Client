@@ -81,7 +81,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }else{
-                    new LoginTask().execute("http://192.168.12.122:8002/login/");
+                    new LoginTask().execute(URL.host + "/login/");//"http://192.168.12.122:8002/login/"
                 }
                 break;
             case R.id.bRegistration:
@@ -169,9 +169,6 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             progressDialog.cancel();
 
             if (result == true) {
-                /*Intent intent = new Intent(getApplicationContext(), HomePageActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-                finish();*/
                 Log.i("info","Success login");
                 Intent intent = new Intent(getApplicationContext(), NavigationDrawer.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);

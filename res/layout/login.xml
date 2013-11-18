@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#ffb1bcc5" >
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sign In"
+            android:id="@+id/bSigIn"
+            android:layout_gravity="center_horizontal"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:background="@drawable/button_action"
+            android:textColor="#ff656565"/>
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Registered"
+            android:id="@+id/bRegistration"
+            android:textColor="#ff656565"
+            android:background="@drawable/button_action"
+            android:layout_marginTop="30dp"
+            android:layout_below="@+id/bSigIn"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_centerHorizontal="true" />
+
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:id="@+id/eUsername"
+            android:hint="login"
+            android:gravity="center"
+            android:layout_above="@+id/ePassword"
+            android:layout_alignLeft="@+id/ePassword"
+            android:layout_alignRight="@+id/bSigIn"/>
+
+    <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberPassword"
+            android:ems="10"
+            android:id="@+id/ePassword"
+            android:hint="password"
+            android:gravity="center"
+            android:layout_above="@+id/bSigIn"
+            android:layout_alignLeft="@+id/bSigIn"
+            android:layout_alignRight="@+id/bSigIn"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="30dp"/>
+
+</RelativeLayout>

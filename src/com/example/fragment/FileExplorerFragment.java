@@ -2,6 +2,7 @@ package com.example.fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -36,6 +37,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -52,7 +55,7 @@ public class FileExplorerFragment extends Fragment {
     private static String PATH = "path";
     private static String SIZE = "size";
     private static String ICON = "icon";
-    private static String DIR = "dir";
+    private static String DIR  = "dir";
 
     private ListView listView = null;
     boolean is_runing = false;
@@ -77,12 +80,10 @@ public class FileExplorerFragment extends Fragment {
                 boolean dir = (Boolean)item.get(DIR);
                 if (dir){
                     String p = (String)item.get(PATH)  + (String)item.get(NAME);
-                    Log.i("info"," dir ---- " + p.toString());
                     currentPath = p;
                     new DirTask().execute(currentPath);
                 }else{
                     String p = (String)item.get(PATH)  + (String)item.get(NAME);
-                    Log.i("info","name = " + p.toString());
                     String[] param = {p, (String)item.get(PATH).toString(), (String)item.get(NAME)};
                     new OpenFileTask().execute(param);
                 }
@@ -163,7 +164,7 @@ public class FileExplorerFragment extends Fragment {
                     HashMap<String,Object>resurce = new HashMap<String, Object>();
 
                     resurce.put(NAME,back);
-                    resurce.put(ICON,R.drawable.folder_64x64);
+                    resurce.put(ICON,R.drawable.folder);
                     resurce.put(PATH,"");
                     resurce.put(DIR, Boolean.TRUE);
                     listContent.add(resurce);
@@ -177,17 +178,25 @@ public class FileExplorerFragment extends Fragment {
                             resurce.put(PATH,file.optString("path"));
                             if (file.optBoolean("is_dir")){
                                 resurce.put(SIZE,"");
-                                resurce.put(ICON,R.drawable.folder_64x64);
+                                resurce.put(ICON,R.drawable.folder);
                                 resurce.put(DIR,Boolean.TRUE);
                             } else {
-                                resurce.put(SIZE,file.optDouble("size"));
-                                resurce.put(ICON,R.drawable.file_64x64);
+                                float size = (float)file.optDouble("size");
+                                String fileSize = String.format("%.0f",(float)size) + " B";
+                                if (size > 2048){
+                                    size = size / 1024;
+                                    fileSize = String.format("%.1f",(float)size)+ " Kb";
+                                }
+                                if (size > 2048)
+                                    fileSize = String.format("%.2f",(float)(size/1024)) + " Mb";
+
+                                resurce.put(SIZE, fileSize);
+                                resurce.put(ICON,getFileImage(file.optString("name")));
                                 resurce.put(DIR,Boolean.FALSE);
                             }
                             listContent.add(resurce);
                         }
                     }
-
                 } catch (JSONException e) {
                     is_runing = false;
                     e.printStackTrace();
@@ -229,7 +238,14 @@ public class FileExplorerFragment extends Fragment {
             HttpConnectionParams.setSoTimeout(httpParams,10000);
 
             DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
-            HttpGet httpGet = new HttpGet(URL.host + "/get_file/?file=" + file[0]);
+            HttpGet httpGet = null;
+            //httpGet = new HttpGet(URL.host + "/get_file/?file=" + file[0]);
+            try {
+                httpGet = new HttpGet(URL.host + "/get_file/?file=" + URLEncoder.encode(file[0], "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                return false;
+            }
 
             HttpContext httpContext = new BasicHttpContext();
             httpContext.setAttribute(ClientContext.COOKIE_STORE, SApplication.cookieStore);
@@ -244,14 +260,9 @@ public class FileExplorerFragment extends Fragment {
                 fos.write(_file_, 0, _file_.length);
                 fos.flush();
                 fos.close();
-                startActivity(FileHelper.openFileIntent(f));
-
-                /*Bitmap image = BitmapFactory.decodeByteArray( _file_, 0, _file_.length);
-                File f = new File(get_cache_path(), file[2]);
-                FileOutputStream fos = new FileOutputStream(f);
-                image.compress(Bitmap.CompressFormat.PNG, 90, fos);
-                startActivity(FileHelper.openFileIntent(f));*/
-
+                Intent intent = FileHelper.openFileIntent(f);
+                if(intent != null)
+                    startActivity(FileHelper.openFileIntent(f));
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -272,5 +283,45 @@ public class FileExplorerFragment extends Fragment {
         if(!cacheDir.exists())
             cacheDir.mkdirs();
         return cacheDir.getAbsolutePath();
+    }
+
+    private int getFileImage(String filename) {
+        Log.i("info"," ---------------------- File name = " + filename);
+        String extension = "";
+        try{
+            extension = filename.substring(filename.lastIndexOf("."));
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        if (extension.equals(".pdf")){
+            return R.drawable.file_pdf;
+        }else if(extension.equals(".h")){
+            return R.drawable.file_h;
+        }else if(extension.equals(".py")){
+            return R.drawable.file_py;
+        }else if (extension.equals(".xls")){
+            return R.drawable.file_excel;
+        }else if (extension.equals(".doc") || extension.equals(".docx")){
+            return R.drawable.file_word;
+        }else if (extension.equals(".c")){
+            return R.drawable.file_c;
+        }else if (extension.equals(".cpp") || extension.equals(".cp") || extension.equals(".c++")
+                || extension.equals(".gcc") || extension.equals(".g++") || extension.equals(".cc")){
+            return R.drawable.file_cpp;
+        }else if(extension.equals(".java")){
+            return R.drawable.file_java;
+        }else if (extension.equals(".bmp") || extension.equals(".jpg") || extension.equals(".png")) {
+            return R.drawable.file_image;
+        }else if(extension.equals(".xml")){
+            return R.drawable.file_xml;
+        }else if(extension.equals(".apk") || extension.equals(".exe")) {
+            return R.drawable.file_exe;
+        }else if(extension.equals(".mp4")) {
+            return R.drawable.file_film;
+        }else if(extension.equals(".mp3")){
+            return R.drawable.file_sound;
+        }
+        return R.drawable.file;
     }
 }

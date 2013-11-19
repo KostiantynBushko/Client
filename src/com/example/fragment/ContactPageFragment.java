@@ -77,14 +77,10 @@ public class ContactPageFragment extends Fragment {
         listView = (ListView)root.findViewById(R.id.listView);
         listContact = new ArrayList<HashMap<String, Object>>();
 
-        //Chash Bitmap
-        Log.i("info","---------------------------------------------------------------------------");
-        Log.i("info","---------------------------------------------------------------------------");
-        Log.i("info","---------------------------------------------------------------------------");
         final int maxMemory  = (int)(Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory;
-        Log.i("info","maxMemory = " + Integer.toString(maxMemory));
-        Log.i("info","cacheSize = " + Integer.toString(cacheSize));
+        Log.i("info","maxMemory = " + Integer.toString(maxMemory / 1024) + "Kb");
+        Log.i("info","cacheSize = " + Integer.toString(cacheSize / 1024) + "Kb");
 
         mMemoryCach = new LruCache<String, Bitmap>(cacheSize) {
             @Override
@@ -92,9 +88,6 @@ public class ContactPageFragment extends Fragment {
                 return bitmap.getByteCount() /1024;
             }
         };
-        Log.i("info","---------------------------------------------------------------------------");
-
-
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -105,15 +98,20 @@ public class ContactPageFragment extends Fragment {
                 firstVisibleItem = firstVisible;
                 visibleCountItem = visibleCount;
 
-                Log.i("info"," First visible item = " + Integer.toString(firstVisible));
-                Log.i("info"," Vsible count item  = " + Integer.toString(visibleCount));
-                Log.i("info"," Total item count   = " + Integer.toString(totalCount));
-                Log.i("info","-------------------------------------------------------------------");
                 if (++firstVisible + visibleCount > totalCount && totalCount > 0){
-                    Log.i("info", " **** Load more contact *** ");
                     if (!is_runing){
                         is_runing = true;
                         new LoadContactTask().execute(URL.host + "/user_list/");
+                    }
+                }
+                for (int i=0; i<visibleCount; i++){
+                    View v = absListView.getChildAt(i);
+                    ImageView iv = (ImageView)v.findViewById(R.id.icon);
+                    Bitmap bitmap = getBitmapFromMemCache(Integer.toString(i+firstVisibleItem));
+                    if (iv != null) {
+                        if (bitmap != null){
+                            iv.setImageBitmap(bitmap);
+                        }
                     }
                 }
             }
@@ -123,7 +121,6 @@ public class ContactPageFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int item, long l) {
                 Log.i("info"," - " + Integer.toString(item));
-                Log.i("info"," - " + Integer.toString(item + firstVisibleItem));
                 ImageView i = (ImageView)view.findViewById(R.id.icon);
                 Bitmap bitmap = getBitmapFromMemCache(Integer.toString(item));
                 i.setImageBitmap(bitmap);
@@ -140,7 +137,10 @@ public class ContactPageFragment extends Fragment {
     }
 
     public Bitmap getBitmapFromMemCache(String key) {
-        return mMemoryCach.get(key);
+        Bitmap bitmap = mMemoryCach.get(key);
+        if (bitmap == null)
+            Log.i("info"," Object in the cache not found");
+        return bitmap;
     }
 
     @Override
@@ -159,10 +159,9 @@ public class ContactPageFragment extends Fragment {
         }
     }
 
-    //Load contact
+
     class LoadContactTask extends AsyncTask<String, Void, Boolean> {
         String response = "";
-
         @Override
         protected Boolean doInBackground(String... url) {
 
@@ -190,33 +189,25 @@ public class ContactPageFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Boolean result){
-
             super.onPostExecute(result);
             if (result){
                 JSONObject User;
                 try {
                     contacts = new JSONArray(response.toString());
-                    Log.i("info",contacts.toString());
-                    Log.i("info", " offset = " + Integer.toString(offset));
-                    Log.i("info", " contact count = " + Integer.toString(contacts.length()));
                     HashMap<String, Object>resurce;
-
                     int id = offset;
-
                     if (contacts.length() > 0){
                         offset += contacts.length();
                         for (int i = 0; i< contacts.length(); i++) {
                             User = contacts.getJSONObject(i);
                             User = User.getJSONObject("fields");
                             resurce = new HashMap<String, Object>();
-                            //resurce.put(NAME,"[ " + User.opt("username") + " ] " + User.opt("first_name") + " " + User.opt("last_name"));
                             resurce.put(NAME,User.opt("username"));
                             resurce.put(EMAIL,User.get("email"));
                             resurce.put(ICON, R.drawable.default_user_icon_profile);
                             resurce.put(U_ID,Integer.toString(id++));
                             listContact.add(resurce);
-
-                            //new DownloadImage(countItems++).execute("http://192.168.12.122:8002/load/?username=" + User.opt("username"));
+                            new DownloadImage(countItems++).execute(URL.host + "/load/?username=" + User.opt("username"));
                         }
 
                         if (listView.getAdapter() == null) {
@@ -244,7 +235,6 @@ public class ContactPageFragment extends Fragment {
 
 
     class DownloadImage extends AsyncTask<String, Void, Bitmap> {
-        private Bitmap bitmap = null;
         int item = 0;
 
         public DownloadImage(int item){
@@ -253,12 +243,6 @@ public class ContactPageFragment extends Fragment {
 
         @Override
         protected Bitmap doInBackground(String... url) {
-
-            Log.i("info","------------------------------------------");
-            Log.i("info","Item = " + Integer.toString(item));
-            Log.i("info","URL  = " + url[0]);
-            Log.i("info","------------------------------------------");
-
             HttpParams httpParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(httpParams,10000);
             HttpConnectionParams.setSoTimeout(httpParams,10000);
@@ -284,17 +268,17 @@ public class ContactPageFragment extends Fragment {
         @Override
         public void onPostExecute(Bitmap image) {
             if (image != null) {
-                //bitmap = image;
                 Log.i("info","Add bit map to cach = " + Integer.toString(item));
                 addBitmapToMemoryCache(Integer.toString(item), image);
-                /*if (item <= visibleCountItem + firstVisibleItem && item >= firstVisibleItem) {
-                    ImageView i = (ImageView)listView.getChildAt(item).findViewById(R.id.icon);
-                    i.setImageBitmap(bitmap);
-                }*/
-                //i.setImageBitmap(bitmap);
-                //((BaseAdapter) listView.getAdapter()).notifyDataSetChanged();
+                View v = listView.getChildAt(item);
+                if (v != null) {
+                    ImageView iv = (ImageView)v.findViewById(R.id.icon);
+                    if (iv != null)
+                        Log.i("info"," + ");
+                        iv.setImageBitmap(image);
+                }
+                Log.i("info", " Cache current size = " + mMemoryCach.size() / 1024 + "Kb");
             }
         }
     }
-
 }

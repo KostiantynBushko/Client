@@ -35,7 +35,6 @@ public final class R {
         public static final int button_action=0x7f020002;
         public static final int default_user_icon_profile=0x7f020003;
         public static final int file_64x64=0x7f020004;
-        public static final int folder_64x64=0x7f020005;
         public static final int ic_launcher=0x7f020006;
         public static final int t=0x7f020007;
     }

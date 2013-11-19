@@ -29,36 +29,48 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Rihanna Love the way lie"
-        android:textColor="#040404"
+        android:textColor="#ff707b84"
         android:textSize="15dip"
         android:textStyle="bold"
         android:typeface="sans"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/thumbnail"
         android:ellipsize="start"
-        android:singleLine="true"/>
+        android:singleLine="true"
+        android:layout_toLeftOf="@+id/textView"/>
 
     <TextView
         android:id="@+id/text2"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Just gona stand there sand ..."
-        android:textColor="#343434"
+        android:textColor="#ff999999"
         android:textSize="10dip"
         android:layout_alignBottom="@+id/thumbnail"
         android:layout_toRightOf="@+id/thumbnail"
-        android:layout_alignRight="@+id/textView"
         android:ellipsize="start"
-        android:singleLine="true"/>
+        android:singleLine="true"
+        android:layout_alignRight="@+id/text1"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="0"
+        android:text="0b"
+        android:textSize="14dp"
+        android:textColor="#ff7da0c0"
         android:id="@+id/text3"
-        android:layout_alignTop="@+id/text1"
-        android:layout_alignParentRight="true"
         android:ellipsize="start"
-        android:singleLine="true"/>
+        android:singleLine="true"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView"
+            android:layout_above="@+id/text2"
+            android:layout_toLeftOf="@+id/text3"
+            android:layout_marginRight="47dp"/>
+
 </RelativeLayout>

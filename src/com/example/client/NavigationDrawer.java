@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 /**
@@ -20,6 +21,7 @@ public class NavigationDrawer extends FragmentActivity {
     private String[] drawerItems;
     private ListView drawerListView;
     private DrawerLayout drawerLayout;
+    private LinearLayout drawerLeftLayout;
     private int itemPosition = 0;
 
     final String[] fragments ={
@@ -41,7 +43,8 @@ public class NavigationDrawer extends FragmentActivity {
 
         drawerLayout= (DrawerLayout)findViewById(R.id.drawer_layout);
         drawerItems = getResources().getStringArray(R.array.items);
-        drawerListView = (ListView)findViewById(R.id.left_drawer);
+        drawerLeftLayout = (LinearLayout)findViewById(R.id.left_drawer);
+        drawerListView = (ListView)findViewById(R.id.left_drawer_list);
         
         drawerListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,drawerItems));
 
@@ -75,7 +78,7 @@ public class NavigationDrawer extends FragmentActivity {
                         super.onDrawerStateChanged(newState);
                     }
                 });
-                drawerLayout.closeDrawer(drawerListView);
+                drawerLayout.closeDrawer(drawerLeftLayout);
             }
         });
 

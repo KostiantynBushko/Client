@@ -76,7 +76,6 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        Log.i("info"," -- HomePageFragment [ onCreateView ]");
         ViewGroup root = (ViewGroup)inflater.inflate(R.layout.home_page,null);
 
         Button SignOut = (Button)root.findViewById(R.id.bSignOut);
@@ -90,7 +89,6 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
         icon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("info","Icon click");
                 Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, 0);
             }

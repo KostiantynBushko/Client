@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -56,9 +57,17 @@ public class FileExplorerFragment extends Fragment {
     private static String SIZE = "size";
     private static String ICON = "icon";
     private static String DIR  = "dir";
-
     private ListView listView = null;
+
+    private int firstVisibleItem = 0;
+    private int visibleCountItem = 0;
+    private int totalCountItem = 0;
+    private int selectedItem = 0;
     boolean is_runing = false;
+
+    Bundle bundle = null;
+    private final long FILE_CACHE_SIZE = 350;
+
 
     public static Fragment newInstance(Context context) {
         FileExplorerFragment fileExplorerFragment = new FileExplorerFragment();
@@ -67,15 +76,22 @@ public class FileExplorerFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.i("info"," FileExplorerFragment [ onCreateView ]");
+        if (savedInstanceState != null){
+            currentPath = savedInstanceState.getString("current_path");
+            bundle = savedInstanceState;
+        }
         ViewGroup root = (ViewGroup)inflater.inflate(R.layout.file_list, null);
         listView = (ListView)root.findViewById(R.id.listView);
         listContent = new ArrayList<HashMap<String, Object>>();
+
+        // list view listener
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if(is_runing)
                     return;
-
+                selectedItem = i;
                 HashMap<String,Object>item = listContent.get(i);
                 boolean dir = (Boolean)item.get(DIR);
                 if (dir){
@@ -89,29 +105,52 @@ public class FileExplorerFragment extends Fragment {
                 }
             }
         });
-
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Log.i("info"," int  click : " + Integer.toString(i));
-                Log.i("info"," Long click : " + Long.toString(l));
-
                 return true;
             }
         });
-
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {}
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisible, int visibleCount, int totalCount) {
+                firstVisibleItem = firstVisible;
+                visibleCountItem = visibleCount;
+                totalCountItem = totalCount;
+            }
+        });
         dir = new String(URL.host) + "/ls/?path=";
         return root;
     }
 
+    /* life cycle */
     @Override
     public void onResume(){
         super.onResume();
+        if (getCacheSize() >= FILE_CACHE_SIZE)
+            clearChache();
         new DirTask().execute(currentPath);
     }
+    @Override
+    public void onDestroyView(){
+        Log.i("info"," FileExplorerFragment [ onDestroyView ]");
+        super.onDestroyView();
+    }
+    @Override
+    public void onDestroy() {
+        Log.i("info"," FileExplorerFragment [ onDestroy ]");
+        super.onDestroy();
+    }
+    @Override
+    public void onSaveInstanceState(Bundle onState) {
+        Log.i("info"," - FileExplorerFragment [ onSavedInstanseState ]");
+        super.onSaveInstanceState(onState);
+        onState.putString("current_path",currentPath);
+    }
 
-
-    /* Dir */
+    /* ls */
     class DirTask extends AsyncTask<String, Void, Boolean> {
         private String responce;
 
@@ -207,12 +246,13 @@ public class FileExplorerFragment extends Fragment {
                         new int[]{R.id.text1,R.id.text2,R.id.icon,R.id.text3});
                 listView.setAdapter(adapter);
                 listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                listView.setSelection(firstVisibleItem);
                 is_runing = false;
             }
         }
     }
 
-    /* Open file */
+    /* open file */
     class OpenFileTask extends AsyncTask<String, Void, Boolean> {
         String responce = null;
         ProgressDialog progressDialog = null;
@@ -239,7 +279,6 @@ public class FileExplorerFragment extends Fragment {
 
             DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
             HttpGet httpGet = null;
-            //httpGet = new HttpGet(URL.host + "/get_file/?file=" + file[0]);
             try {
                 httpGet = new HttpGet(URL.host + "/get_file/?file=" + URLEncoder.encode(file[0], "UTF-8"));
             } catch (UnsupportedEncodingException e) {
@@ -261,15 +300,49 @@ public class FileExplorerFragment extends Fragment {
                 fos.flush();
                 fos.close();
                 Intent intent = FileHelper.openFileIntent(f);
-                if(intent != null)
+                if(intent != null) {
                     startActivity(FileHelper.openFileIntent(f));
-                return true;
+                    return true;
+                }else {
+                    return false;
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return false;
         }
 
+    }
+
+    private long getCacheSize() {
+        long size = 0;
+        File file = new File(get_cache_path());
+        if(file != null && file.isDirectory()){
+            File[] files = file.listFiles();
+            for(File f : files) {
+                size += f.length() / 1024 / 1024;
+            }
+        }
+        Log.i("info"," -- Current chache size = " + Long.toString(size) + " Mb");
+        return size;
+    }
+
+    private void clearChache() {
+        File cacheDir;
+        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)){
+            cacheDir=new File(android.os.Environment.getExternalStorageDirectory(),"Client");
+        }else {
+            cacheDir=getActivity().getCacheDir();
+        }
+        File[] files = cacheDir.listFiles();
+        long size = 0;
+        if (files != null) {
+            for (File f : files) {
+                f.delete();
+                Log.i("info"," - delete chache files - " + f.getName());
+            }
+        }
+        cacheDir.delete();
     }
 
     private String get_cache_path(){
@@ -286,7 +359,6 @@ public class FileExplorerFragment extends Fragment {
     }
 
     private int getFileImage(String filename) {
-        Log.i("info"," ---------------------- File name = " + filename);
         String extension = "";
         try{
             extension = filename.substring(filename.lastIndexOf("."));

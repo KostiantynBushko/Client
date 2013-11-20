@@ -1,11 +1,14 @@
 package com.example.client;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -22,7 +25,8 @@ public class NavigationDrawer extends FragmentActivity {
     private ListView drawerListView;
     private DrawerLayout drawerLayout;
     private LinearLayout drawerLeftLayout;
-    private int itemPosition = 0;
+    private int currentFragment = 0;
+    private final String CURRENT_FRAGMNET = "current_fragment";
 
     final String[] fragments ={
             "com.example.fragment.HomePageFragment",
@@ -33,21 +37,19 @@ public class NavigationDrawer extends FragmentActivity {
             "com.example.fragment.ContactPageFragment",
             "com.example.fragment.ContactPageFragment"
     };
-
-
     @Override
     protected void onCreate(Bundle savedInstaseState) {
         super.onCreate(savedInstaseState);
+        Log.i("info"," NavigationDrawer [ onCreate ]");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
         drawerLayout= (DrawerLayout)findViewById(R.id.drawer_layout);
         drawerItems = getResources().getStringArray(R.array.items);
         drawerLeftLayout = (LinearLayout)findViewById(R.id.left_drawer);
-        drawerListView = (ListView)findViewById(R.id.left_drawer_list);
-        
-        drawerListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,drawerItems));
 
+        drawerListView = (ListView)findViewById(R.id.left_drawer_list);
+        drawerListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,drawerItems));
         drawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {
@@ -65,10 +67,10 @@ public class NavigationDrawer extends FragmentActivity {
                     @Override
                     public void onDrawerClosed(View drawerView) {
                         super.onDrawerClosed(drawerView);
-                        if (itemPosition != position){
-                            itemPosition = position;
+                        if (currentFragment != position){
+                            currentFragment = position;
                             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[itemPosition]));
+                            transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[currentFragment]));
                             transaction.commit();
                         }
                     }
@@ -82,13 +84,50 @@ public class NavigationDrawer extends FragmentActivity {
             }
         });
 
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[itemPosition]));
-        transaction.commit();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        currentFragment = sharedPreferences.getInt(CURRENT_FRAGMNET,0);
+
+        if (savedInstaseState == null){
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[currentFragment]));
+            transaction.commit();
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        Log.i("info", " NavigationDraver [ onStart ]");
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.i("info"," NavigationDrawer [ onResume ]");
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.i("info", " NavigationDrawer [ onStop ]");
+        // Save last opened fragment in the preferences
+        SharedPreferences sharedPreferences = PreferenceManager
+                .getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt(CURRENT_FRAGMNET,currentFragment);
+        editor.commit();
+    }
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 }

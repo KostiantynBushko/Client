@@ -42,13 +42,13 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        Log.i("info"," -- MainActivity [ onSavedInstanceState ]");
+        //Log.i("info"," -- MainActivity [ onSavedInstanceState ]");
     }
 
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
-        Log.i("info"," -- MainActivity [ onRestoreInstanceState ]");
+        //Log.i("info"," -- MainActivity [ onRestoreInstanceState ]");
     }
 
     class ChecAuthentication extends AsyncTask<String, Void, Boolean> {

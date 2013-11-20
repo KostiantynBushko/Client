@@ -24,6 +24,8 @@ public class FileHelper {
     }
 
     public static String getMimeType(String url) {
+        if(url.indexOf(".") == -1)
+            return "*/*";
         String extension = url.substring(url.lastIndexOf("."));
         String mimeTypeMap = MimeTypeMap.getFileExtensionFromUrl(extension);
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(mimeTypeMap);

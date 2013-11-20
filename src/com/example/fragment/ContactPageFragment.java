@@ -233,7 +233,6 @@ public class ContactPageFragment extends Fragment {
         }
     }
 
-
     class DownloadImage extends AsyncTask<String, Void, Bitmap> {
         int item = 0;
 

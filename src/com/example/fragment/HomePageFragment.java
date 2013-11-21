@@ -352,10 +352,7 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
     }
 
     private static Bitmap codec(Bitmap src) {
-        //Bitmap src,
-        // Bitmap.CompressFormat format,
         int quality = 20;
-
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         src.compress(Bitmap.CompressFormat.PNG, quality, os);
 

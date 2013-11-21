@@ -35,6 +35,16 @@
         <activity android:name="LoginActivity"></activity>
         <activity android:name="HomePageActivity"></activity>
         <activity android:name="NavigationDrawer"></activity>
+        <activity
+                android:name="SqLiteEditorActivity"
+                android:label="SqLite 3 Editor"
+                android:icon="@drawable/db">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+        </activity>
 
 
     </application>

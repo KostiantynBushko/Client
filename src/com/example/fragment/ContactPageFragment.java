@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
@@ -120,13 +122,15 @@ public class ContactPageFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int item, long l) {
-                Log.i("info"," - " + Integer.toString(item));
-                ImageView i = (ImageView)view.findViewById(R.id.icon);
-                Bitmap bitmap = getBitmapFromMemCache(Integer.toString(item));
-                i.setImageBitmap(bitmap);
+                Fragment fragment= new SendMessage();
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.add(R.id.content_frame, fragment);
+                fragmentTransaction.hide(fragmentManager.getFragments().get(0));
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
-
         return root;
     }
 

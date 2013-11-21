@@ -135,17 +135,14 @@ public class FileExplorerFragment extends Fragment {
     }
     @Override
     public void onDestroyView(){
-        Log.i("info"," FileExplorerFragment [ onDestroyView ]");
         super.onDestroyView();
     }
     @Override
     public void onDestroy() {
-        Log.i("info"," FileExplorerFragment [ onDestroy ]");
         super.onDestroy();
     }
     @Override
     public void onSaveInstanceState(Bundle onState) {
-        Log.i("info"," - FileExplorerFragment [ onSavedInstanseState ]");
         super.onSaveInstanceState(onState);
         onState.putString("current_path",currentPath);
     }
@@ -254,7 +251,6 @@ public class FileExplorerFragment extends Fragment {
 
     /* open file */
     class OpenFileTask extends AsyncTask<String, Void, Boolean> {
-        String responce = null;
         ProgressDialog progressDialog = null;
         @Override
         protected void onPreExecute(){
@@ -299,6 +295,9 @@ public class FileExplorerFragment extends Fragment {
                 fos.write(_file_, 0, _file_.length);
                 fos.flush();
                 fos.close();
+                byte[] newByte = new byte[15];
+                System.arraycopy(_file_, 0, newByte, 0, 15);
+                Log.i("info"," - files data = " + new String(_file_,"UTF-8"));
                 Intent intent = FileHelper.openFileIntent(f);
                 if(intent != null) {
                     startActivity(FileHelper.openFileIntent(f));
@@ -319,28 +318,25 @@ public class FileExplorerFragment extends Fragment {
         File file = new File(get_cache_path());
         if(file != null && file.isDirectory()){
             File[] files = file.listFiles();
-            for(File f : files) {
+            for(File f : files)
                 size += f.length() / 1024 / 1024;
-            }
         }
-        Log.i("info"," -- Current chache size = " + Long.toString(size) + " Mb");
+        Log.i("info"," Cache Size = " + Long.toString(size) + " Mb");
         return size;
     }
 
     private void clearChache() {
         File cacheDir;
-        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)){
+        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
             cacheDir=new File(android.os.Environment.getExternalStorageDirectory(),"Client");
-        }else {
+        else
             cacheDir=getActivity().getCacheDir();
-        }
+
         File[] files = cacheDir.listFiles();
         long size = 0;
         if (files != null) {
-            for (File f : files) {
+            for (File f : files)
                 f.delete();
-                Log.i("info"," - delete chache files - " + f.getName());
-            }
         }
         cacheDir.delete();
     }
@@ -363,7 +359,7 @@ public class FileExplorerFragment extends Fragment {
         try{
             extension = filename.substring(filename.lastIndexOf("."));
         }catch(Exception e){
-            e.printStackTrace();
+            return R.drawable.file;
         }
 
         if (extension.equals(".pdf")){
@@ -395,5 +391,9 @@ public class FileExplorerFragment extends Fragment {
             return R.drawable.file_sound;
         }
         return R.drawable.file;
+    }
+
+    private String parseFileHeader(byte[] array) {
+        return null;
     }
 }

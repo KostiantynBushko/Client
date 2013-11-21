@@ -38,8 +38,8 @@ public class NavigationDrawer extends FragmentActivity {
             "com.example.fragment.ContactPageFragment"
     };
     @Override
-    protected void onCreate(Bundle savedInstaseState) {
-        super.onCreate(savedInstaseState);
+    protected void onCreate(Bundle savedInstaceState) {
+        super.onCreate(savedInstaceState);
         Log.i("info"," NavigationDrawer [ onCreate ]");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
@@ -87,7 +87,7 @@ public class NavigationDrawer extends FragmentActivity {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         currentFragment = sharedPreferences.getInt(CURRENT_FRAGMNET,0);
 
-        if (savedInstaseState == null){
+        if (savedInstaceState == null){
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[currentFragment]));
             transaction.commit();
@@ -114,7 +114,6 @@ public class NavigationDrawer extends FragmentActivity {
     @Override
     public void onStop(){
         super.onStop();
-        Log.i("info", " NavigationDrawer [ onStop ]");
         // Save last opened fragment in the preferences
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(getBaseContext());

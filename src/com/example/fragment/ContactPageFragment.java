@@ -1,13 +1,13 @@
 package com.example.fragment;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
@@ -43,6 +43,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+
 
 /**
  * Created by kbushko on 11/6/13.
@@ -84,6 +85,11 @@ public class ContactPageFragment extends Fragment {
         Log.i("info","maxMemory = " + Integer.toString(maxMemory / 1024) + "Kb");
         Log.i("info","cacheSize = " + Integer.toString(cacheSize / 1024) + "Kb");
 
+
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
+        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
+        fragmentTransaction.addToBackStack(ContactPageFragment.class.getName());
+
         mMemoryCach = new LruCache<String, Bitmap>(cacheSize) {
             @Override
             protected int sizeOf(String key, Bitmap bitmap){
@@ -123,12 +129,23 @@ public class ContactPageFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int item, long l) {
                 Fragment fragment= new SendMessage();
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.add(R.id.content_frame, fragment);
-                fragmentTransaction.hide(fragmentManager.getFragments().get(0));
-                fragmentTransaction.addToBackStack(null);
+                FragmentManager fragmentManager = getActivity().getFragmentManager();
+                FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
+
+                fragmentTransaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right);
+                //fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                //fragmentTransaction.hide(fragmentManager.findFragmentByTag(ContactPageFragment.class.getName()));
+                //fragmentTransaction.add(R.id.content_frame, fragment,SendMessage.class.getName());
+
+                Fragment f = fragmentManager.findFragmentByTag(ContactPageFragment.class.getName());
+
+                fragmentTransaction.add(R.id.content_frame, fragment, SendMessage.class.getName());
+                //fragmentTransaction.replace(R.id.content_frame,fragment);
+                //fragmentTransaction.addToBackStack(ContactPageFragment.class.getName());
                 fragmentTransaction.commit();
+
+                Log.i("info"," SendMessage Fragment Tag = " + fragment.getTag());
+                Log.i("info"," ClasName = " + ContactPageFragment.class.getName());
             }
         });
         return root;
@@ -276,9 +293,10 @@ public class ContactPageFragment extends Fragment {
                 View v = listView.getChildAt(item);
                 if (v != null) {
                     ImageView iv = (ImageView)v.findViewById(R.id.icon);
-                    if (iv != null)
+                    if (iv != null) {
                         Log.i("info"," + ");
                         iv.setImageBitmap(image);
+                    }
                 }
                 Log.i("info", " Cache current size = " + mMemoryCach.size() / 1024 + "Kb");
             }

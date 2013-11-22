@@ -1,12 +1,12 @@
 package com.example.client;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
@@ -19,7 +19,7 @@ import android.widget.ListView;
 /**
  * Created by kbushko on 11/6/13.
  */
-public class NavigationDrawer extends FragmentActivity {
+public class NavigationDrawer extends Activity {
 
     private String[] drawerItems;
     private ListView drawerListView;
@@ -35,7 +35,7 @@ public class NavigationDrawer extends FragmentActivity {
             "com.example.fragment.OpenFileFragment",
             "com.example.fragment.ContactPageFragment",
             "com.example.fragment.ContactPageFragment",
-            "com.example.fragment.ContactPageFragment"
+            "com.example.fragment.ServiceManager"
     };
     @Override
     protected void onCreate(Bundle savedInstaceState) {
@@ -49,7 +49,9 @@ public class NavigationDrawer extends FragmentActivity {
         drawerLeftLayout = (LinearLayout)findViewById(R.id.left_drawer);
 
         drawerListView = (ListView)findViewById(R.id.left_drawer_list);
+
         drawerListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,drawerItems));
+
         drawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {
@@ -69,8 +71,9 @@ public class NavigationDrawer extends FragmentActivity {
                         super.onDrawerClosed(drawerView);
                         if (currentFragment != position){
                             currentFragment = position;
-                            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[currentFragment]));
+                            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[currentFragment]),
+                                    fragments[currentFragment]);
                             transaction.commit();
                         }
                     }
@@ -88,8 +91,9 @@ public class NavigationDrawer extends FragmentActivity {
         currentFragment = sharedPreferences.getInt(CURRENT_FRAGMNET,0);
 
         if (savedInstaceState == null){
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[currentFragment]));
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[currentFragment]),
+                    fragments[currentFragment]);
             transaction.commit();
         }
     }

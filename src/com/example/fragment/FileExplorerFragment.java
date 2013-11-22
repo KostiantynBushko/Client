@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -287,7 +287,7 @@ public class FileExplorerFragment extends Fragment {
 
             try {
                 HttpResponse httpResponse = httpClient.execute(httpGet,httpContext);
-                Log.i("info", httpResponse.getFirstHeader("Content-type").toString());
+                //Log.i("info", httpResponse.getFirstHeader("Content-type").toString());
                 Log.i("info", httpResponse.getFirstHeader("Content-length").toString());
                 byte[] _file_ = EntityUtils.toByteArray(httpResponse.getEntity());
                 File f = new File(get_cache_path(), file[2]);

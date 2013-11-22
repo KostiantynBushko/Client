@@ -3,6 +3,7 @@ package com.example.client;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Window;
@@ -35,7 +36,6 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
-
         new ChecAuthentication().execute(URL.host + "/check/");
 	}
 
@@ -52,6 +52,7 @@ public class MainActivity extends FragmentActivity {
     class ChecAuthentication extends AsyncTask<String, Void, Boolean> {
         @Override
         protected Boolean doInBackground(String... urlString) {
+            SystemClock.sleep(1000);
             Boolean result = false;
             HttpParams httpParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(httpParams, 25000);

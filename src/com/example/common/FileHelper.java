@@ -11,18 +11,18 @@ import java.io.File;
  */
 
 public class FileHelper {
+
     private static final String MIME_TYPE_DEFAULT = "*/*";
 
     public static Intent openFileIntent(File file) {
         String type = getMimeType(file.getName());
-        if (type == null)
-            type = MIME_TYPE_DEFAULT;
+        if(type.equals("application/zip"))
+            return null;
+
         Intent intent = new Intent();
         intent.setDataAndType(Uri.parse("file://" + file.getAbsolutePath()),type);
         intent.setAction(Intent.ACTION_DEFAULT);
 
-        if(type.equals("application/zip"))
-            return null;
         return intent;
     }
 
@@ -32,6 +32,8 @@ public class FileHelper {
         String extension = url.substring(url.lastIndexOf("."));
         String mimeTypeMap = MimeTypeMap.getFileExtensionFromUrl(extension);
         String mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(mimeTypeMap);
+        if (mimeType == null)
+            mimeType = MIME_TYPE_DEFAULT;
         return mimeType;
     }
 }

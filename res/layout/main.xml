@@ -6,4 +6,12 @@
                 android:layout_height="match_parent"
                 android:background="#ffb1bcc5" >
 
+    <ProgressBar android:id="@+id/loading_spinner"
+                 style="?android:progressBarStyleLarge"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:layout_gravity="center"
+                 android:layout_centerVertical="true"
+                 android:layout_centerHorizontal="true"/>
+
 </RelativeLayout>

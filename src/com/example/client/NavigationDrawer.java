@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -40,7 +39,6 @@ public class NavigationDrawer extends Activity {
     @Override
     protected void onCreate(Bundle savedInstaceState) {
         super.onCreate(savedInstaceState);
-        Log.i("info"," NavigationDrawer [ onCreate ]");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
@@ -49,9 +47,7 @@ public class NavigationDrawer extends Activity {
         drawerLeftLayout = (LinearLayout)findViewById(R.id.left_drawer);
 
         drawerListView = (ListView)findViewById(R.id.left_drawer_list);
-
         drawerListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,drawerItems));
-
         drawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {
@@ -106,19 +102,17 @@ public class NavigationDrawer extends Activity {
     @Override
     public void onStart(){
         super.onStart();
-        Log.i("info", " NavigationDraver [ onStart ]");
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        Log.i("info"," NavigationDrawer [ onResume ]");
     }
 
     @Override
     public void onStop(){
         super.onStop();
-        // Save last opened fragment in the preferences
+        /* Save last opened fragment in the preferences */
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(getBaseContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();

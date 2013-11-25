@@ -1,8 +1,6 @@
 package com.example.fragment;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -66,8 +64,10 @@ public class ContactPageFragment extends Fragment {
     private int visibleCountItem = 0;
 
     boolean is_runing = false;
-
     LruCache<String, Bitmap>mMemoryCach;
+    boolean mShowingBack = false;
+    ViewGroup root;
+    LoadContactTask loadContactTask;
 
     public static Fragment newInstance(Context contewxt) {
         ContactPageFragment contactPageFragment = new ContactPageFragment();
@@ -76,19 +76,12 @@ public class ContactPageFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle savedInstanceState) {
-        ViewGroup root = (ViewGroup)layoutInflater.inflate(R.layout.contact_layout, null);
-        listView = (ListView)root.findViewById(R.id.listView);
-        listContact = new ArrayList<HashMap<String, Object>>();
+        root = (ViewGroup)layoutInflater.inflate(R.layout.contact_layout, null);
 
         final int maxMemory  = (int)(Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory;
         Log.i("info","maxMemory = " + Integer.toString(maxMemory / 1024) + "Kb");
         Log.i("info","cacheSize = " + Integer.toString(cacheSize / 1024) + "Kb");
-
-
-        FragmentManager fragmentManager = getActivity().getFragmentManager();
-        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
-        fragmentTransaction.addToBackStack(ContactPageFragment.class.getName());
 
         mMemoryCach = new LruCache<String, Bitmap>(cacheSize) {
             @Override
@@ -96,7 +89,31 @@ public class ContactPageFragment extends Fragment {
                 return bitmap.getByteCount() /1024;
             }
         };
+        return root;
+    }
 
+    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
+        if (getBitmapFromMemCache(key) == null) {
+            mMemoryCach.put(key, bitmap);
+        }
+    }
+
+    public Bitmap getBitmapFromMemCache(String key) {
+        Bitmap bitmap = mMemoryCach.get(key);
+        if (bitmap == null)
+            Log.i("info"," Object in the cache not found");
+        return bitmap;
+    }
+
+    @Override
+    public void onResume() {
+        Log.i("info", " -- ContactPageFragment [ onResume ]");
+        mShowingBack = false;
+        countItems = 0;
+        offset = 0;
+        limit = 10;
+        listView = (ListView)root.findViewById(R.id.listView);
+        listContact = new ArrayList<HashMap<String, Object>>();
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {}
@@ -128,56 +145,35 @@ public class ContactPageFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int item, long l) {
-                Fragment fragment= new SendMessage();
-                FragmentManager fragmentManager = getActivity().getFragmentManager();
-                FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
+                if(mShowingBack) {
+                    getFragmentManager().popBackStack();
+                    return;
+                }
 
-                fragmentTransaction.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right);
-                //fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
-                //fragmentTransaction.hide(fragmentManager.findFragmentByTag(ContactPageFragment.class.getName()));
-                //fragmentTransaction.add(R.id.content_frame, fragment,SendMessage.class.getName());
+                HashMap<String, Object>object = listContact.get(item);
+                Bitmap image = getBitmapFromMemCache(Integer.toString(item));
+                String username = (String)object.get(NAME);
+                String email = (String)object.get(EMAIL);
 
-                Fragment f = fragmentManager.findFragmentByTag(ContactPageFragment.class.getName());
-
-                fragmentTransaction.add(R.id.content_frame, fragment, SendMessage.class.getName());
-                //fragmentTransaction.replace(R.id.content_frame,fragment);
-                //fragmentTransaction.addToBackStack(ContactPageFragment.class.getName());
-                fragmentTransaction.commit();
-
-                Log.i("info"," SendMessage Fragment Tag = " + fragment.getTag());
-                Log.i("info"," ClasName = " + ContactPageFragment.class.getName());
+                mShowingBack = true;
+                getFragmentManager().beginTransaction().setCustomAnimations(
+                        R.animator.card_flip_right_in, R.animator.card_flip_right_out,
+                        R.animator.card_flip_left_in, R.animator.card_flip_left_out)
+                        .replace(R.id.content_frame, new SendMessage(image,username,email))
+                        .addToBackStack(null)
+                        .commit();
             }
         });
-        return root;
-    }
 
-    public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
-        if (getBitmapFromMemCache(key) == null) {
-            mMemoryCach.put(key, bitmap);
-        }
-    }
+        loadContactTask = new LoadContactTask();
+        loadContactTask.execute(URL.host + "/user_list/");
 
-    public Bitmap getBitmapFromMemCache(String key) {
-        Bitmap bitmap = mMemoryCach.get(key);
-        if (bitmap == null)
-            Log.i("info"," Object in the cache not found");
-        return bitmap;
-    }
-
-    @Override
-    public void onResume(){
-        Log.i("info", " -- ContactPageFragment [ onResume ]");
         super.onResume();
     }
-
     @Override
-    public void onStart(){
-        Log.i("info"," -- ContactPageFragment [ onStart ]");
-        super.onStart();
-        if (!is_runing){
-            is_runing = true;
-            new LoadContactTask().execute(URL.host + "/user_list/");
-        }
+    public void onStop() {
+        super.onStop();
+        loadContactTask.cancel(true);
     }
 
 

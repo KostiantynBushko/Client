@@ -30,6 +30,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity android:name="RegisteredActivity"></activity>
         <activity android:name="LoginActivity"></activity>
@@ -45,8 +46,12 @@
                 <data android:mimeType="*/*"/>
             </intent-filter>
         </activity>
-
-
+        
+        <service
+                android:name="com.example.services.ShortMessageService"
+                android:process=":shortmessageservice"
+                android:enabled="true"
+                ></service>
     </application>
 
 </manifest>

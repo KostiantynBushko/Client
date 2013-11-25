@@ -2,30 +2,95 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-    <EditText
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Large Text"
-            android:id="@+id/editText"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginBottom="3dp"
-            android:background="#ffe8e8e8"/>
+                android:layout_height="match_parent"
+                android:background="#ffcac2ff">
 
     <FrameLayout
             android:layout_width="fill_parent"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:background="#ffbcbcc0"
+            android:background="#ffffffff"
             android:id="@+id/frameLayout"
             android:layout_marginRight="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp">
+
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:padding="5dip" >
+
+            <!-- ListRow Left sied Thumbnail image -->
+
+            <LinearLayout
+                    android:id="@+id/thumbnail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="5dip"
+                    android:padding="3dip" >
+
+                <ImageView
+                        android:id="@+id/icon"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:src="@drawable/ic_launcher" />
+            </LinearLayout>
+
+            <TextView
+                    android:id="@+id/text1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Rihanna Love the way lie"
+                    android:textColor="#040404"
+                    android:textSize="15dip"
+                    android:textStyle="bold"
+                    android:typeface="sans"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/thumbnail"
+                    />
+
+            <TextView
+                    android:id="@+id/text2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Just gona stand there and ..."
+                    android:textColor="#343434"
+                    android:textSize="12dip"
+                    android:layout_toRightOf="@+id/thumbnail"
+                    android:layout_alignBottom="@+id/thumbnail"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:id="@+id/u_id"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignRight="@+id/text2"/>
+        </RelativeLayout>
     </FrameLayout>
+
+
+    <EditText
+            android:layout_width="241dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/messageField"
+            android:layout_gravity="center"
+            android:layout_marginRight="31dp"
+            android:layout_alignBottom="@+id/bSend"
+            android:layout_toLeftOf="@+id/bSend"/>
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=">"
+            android:id="@+id/bSend"
+            android:layout_gravity="right|center_vertical"
+            android:textColor="#FFFFFF"
+            android:background="@drawable/button_action"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@+id/frameLayout"
+            android:layout_marginBottom="10dp"/>
 
 </RelativeLayout>

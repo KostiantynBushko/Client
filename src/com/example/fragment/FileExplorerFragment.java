@@ -181,7 +181,7 @@ public class FileExplorerFragment extends Fragment {
         protected void onPostExecute(Boolean result) {
             if (result){
                 try {
-                    JSONFileList = new JSONArray(responce.toString());
+                    JSONFileList = new JSONArray(responce);
                     listContent.clear();
                     char[] p = currentPath.toCharArray();
                     int count = p.length;
@@ -287,7 +287,6 @@ public class FileExplorerFragment extends Fragment {
 
             try {
                 HttpResponse httpResponse = httpClient.execute(httpGet,httpContext);
-                //Log.i("info", httpResponse.getFirstHeader("Content-type").toString());
                 Log.i("info", httpResponse.getFirstHeader("Content-length").toString());
                 byte[] _file_ = EntityUtils.toByteArray(httpResponse.getEntity());
                 File f = new File(get_cache_path(), file[2]);

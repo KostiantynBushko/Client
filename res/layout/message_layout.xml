@@ -71,30 +71,66 @@
         </RelativeLayout>
     </FrameLayout>
 
-
-    <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/messageField"
-            android:layout_gravity="center"
-            android:layout_alignBottom="@+id/bSend"
-            android:layout_toLeftOf="@+id/bSend"
-            android:layout_marginBottom="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginLeft="5dp"/>
-
-    <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=">"
-            android:id="@+id/bSend"
-            android:layout_gravity="right|center_vertical"
-            android:textColor="#FFFFFF"
-            android:background="@drawable/button_action"
+    <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="5dp"/>
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/frameLayout">
+
+
+        <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center">
+            <EditText
+                    android:layout_width="308dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/messageField"
+                    android:layout_gravity="left|bottom"
+                    android:layout_alignBottom="@+id/bSend"
+                    android:layout_toLeftOf="@+id/bSend"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"/>
+
+            <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=">"
+                    android:id="@+id/bSend"
+                    android:layout_gravity="right|bottom"
+                    android:textColor="#FFFFFF"
+                    android:background="@drawable/button_action"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"/>
+
+            <ListView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/listView"
+                    android:layout_alignParentTop="false"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_above="@+id/textView"/>
+
+            <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:id="@+id/textView"
+                    android:layout_above="@+id/bSend"
+                    android:layout_alignLeft="@+id/listView"
+                    android:background="@drawable/separate_line"
+                    android:layout_alignRight="@+id/listView"/>
+
+        </RelativeLayout>
+    </FrameLayout>
+
 
 </RelativeLayout>

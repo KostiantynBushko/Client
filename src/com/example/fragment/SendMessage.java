@@ -2,6 +2,7 @@ package com.example.fragment;
 
 import android.app.Fragment;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +30,7 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -50,16 +52,24 @@ public class SendMessage extends Fragment {
 
     EditText messageField = null;
 
+    public SendMessage(){}
     public SendMessage(Bitmap image, String username, String email) {
         this.image = image;
         if (username != null)
             this.username = username;
-        else if (email != null)
+        if (email != null)
             this.email = email;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (savedInstanceState != null){
+            username = savedInstanceState.getString("name");
+            email = savedInstanceState.getString("email");
+            byte[] byteArray = savedInstanceState.getByteArray("icon");
+            image = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
+        }
+
         ViewGroup root = (ViewGroup)inflater.inflate(R.layout.message_layout, null);
         imageView = (ImageView)root.findViewById(R.id.icon);
         tv_username = (TextView)root.findViewById(R.id.text1);
@@ -80,11 +90,13 @@ public class SendMessage extends Fragment {
         return root;
     }
 
-    class SendMessageTask extends AsyncTask<String, Void, Boolean> {
 
+    class SendMessageTask extends AsyncTask<String, Void, Boolean> {
+        String errorMessage = "";
         @Override
         protected Boolean doInBackground(String... strings) {
             if (messageField.getText().length() == 0){
+                errorMessage = "... type message";
                 return false;
             }
 
@@ -113,6 +125,7 @@ public class SendMessage extends Fragment {
                 httpClient.execute(httpPost,httpContext);
                 return true;
             } catch (IOException e) {
+                errorMessage = "... failed connection";
                 e.printStackTrace();
             }
             return false;
@@ -120,9 +133,20 @@ public class SendMessage extends Fragment {
         @Override
         public void onPostExecute(Boolean result) {
             if(result == false) {
-                Toast.makeText(getActivity()," ... type a message",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),errorMessage,Toast.LENGTH_SHORT).show();
+            } else{
+                messageField.getText().clear();
             }
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("name",username);
+        outState.putString("email",email);
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+        outState.putByteArray("icon",byteArray);
+    }
 }

@@ -73,13 +73,15 @@
 
 
     <EditText
-            android:layout_width="241dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/messageField"
             android:layout_gravity="center"
-            android:layout_marginRight="31dp"
             android:layout_alignBottom="@+id/bSend"
-            android:layout_toLeftOf="@+id/bSend"/>
+            android:layout_toLeftOf="@+id/bSend"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"/>
 
     <Button
             android:layout_width="wrap_content"
@@ -90,7 +92,9 @@
             android:textColor="#FFFFFF"
             android:background="@drawable/button_action"
             android:layout_alignParentBottom="true"
-            android:layout_alignRight="@+id/frameLayout"
-            android:layout_marginBottom="10dp"/>
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"/>
 
 </RelativeLayout>

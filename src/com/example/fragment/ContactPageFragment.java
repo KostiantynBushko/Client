@@ -100,8 +100,6 @@ public class ContactPageFragment extends Fragment {
 
     public Bitmap getBitmapFromMemCache(String key) {
         Bitmap bitmap = mMemoryCach.get(key);
-        if (bitmap == null)
-            Log.i("info"," Object in the cache not found");
         return bitmap;
     }
 

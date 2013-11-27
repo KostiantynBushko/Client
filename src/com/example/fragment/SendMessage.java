@@ -110,6 +110,8 @@ public class SendMessage extends Fragment {
 
         listMessage = new ArrayList<HashMap<String, Object>>();
         listView = (ListView)root.findViewById(R.id.listView);
+        listView.setDivider(null);
+        listView.setDividerHeight(15);
         return root;
     }
 
@@ -194,9 +196,10 @@ public class SendMessage extends Fragment {
             if(result == false) {
                 Toast.makeText(getActivity(),errorMessage,Toast.LENGTH_SHORT).show();
             } else{
-                addMessageToListView(username,messageField.getText().toString());
+                addMessageToListView("me",messageField.getText().toString());
                 messageField.getText().clear();
             }
+
         }
     }
 
@@ -234,7 +237,9 @@ public class SendMessage extends Fragment {
                     if (jsonArray.length() > 0) {
                         for(int i=0; i<jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i).getJSONObject("fields");
+                            Log.i("info","time : " + object.getString("date"));
                             Log.i("info"," - msg = " + object.getString("message") + " | " + object.getString("sender"));
+
                             addMessageToListView(object.getString("sender"),object.getString("message"));
                         }
                     }

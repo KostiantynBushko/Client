@@ -13,11 +13,11 @@
             android:id="@+id/text1"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="5dp"
             android:textSize="15dp"
-            android:textColor="#ff979797"/>
+            android:textColor="#ff979797"
+            android:layout_toLeftOf="@+id/textView2"/>
 
     <TextView
             android:layout_width="match_parent"
@@ -30,4 +30,25 @@
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="5dp"
             android:textSize="20dp"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Small Text"
+            android:id="@+id/text3"
+            android:layout_above="@+id/text2"
+            android:layout_alignRight="@+id/text2"
+            android:layout_toRightOf="@+id/textView2"
+            android:gravity="right"
+            android:textSize="12dp"
+            android:textColor="#ff8a858f"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/textView2"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"/>
 </RelativeLayout>

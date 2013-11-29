@@ -48,9 +48,10 @@ import java.util.HashMap;
  */
 public class ContactPageFragment extends Fragment {
 
+    private final int GET_ITEM_LIMIT = 6;
     private JSONArray contacts;
     private int offset = 0;
-    private int limit = 10;
+    private int limit = GET_ITEM_LIMIT;
     private int countItems = 0;
 
     ArrayList<HashMap<String, Object>>listContact;
@@ -105,11 +106,10 @@ public class ContactPageFragment extends Fragment {
 
     @Override
     public void onResume() {
-        Log.i("info", " -- ContactPageFragment [ onResume ]");
         mShowingBack = false;
         countItems = 0;
         offset = 0;
-        limit = 10;
+        limit = GET_ITEM_LIMIT;
         listView = (ListView)root.findViewById(R.id.listView);
         listContact = new ArrayList<HashMap<String, Object>>();
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -121,7 +121,7 @@ public class ContactPageFragment extends Fragment {
                 firstVisibleItem = firstVisible;
                 visibleCountItem = visibleCount;
 
-                if (++firstVisible + visibleCount > totalCount && totalCount > 0){
+                if (++firstVisible + visibleCount > totalCount && totalCount > 0){//++firstVisible + visibleCount > totalCount && totalCount > 0
                     if (!is_runing){
                         is_runing = true;
                         new LoadContactTask().execute(URL.host + "/user_list/");
@@ -211,6 +211,7 @@ public class ContactPageFragment extends Fragment {
                     contacts = new JSONArray(response.toString());
                     HashMap<String, Object>resurce;
                     int id = offset;
+                    Log.i("info"," contact length = " + Integer.toString(contacts.length()));
                     if (contacts.length() > 0){
                         offset += contacts.length();
                         for (int i = 0; i< contacts.length(); i++) {
@@ -271,6 +272,8 @@ public class ContactPageFragment extends Fragment {
                 HttpResponse httpResponse = httpClient.execute(httpGet,httpContext);
                 byte[] image = EntityUtils.toByteArray(httpResponse.getEntity());
                 Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                Log.i("info","Add bit map to cach = " + Integer.toString(item));
+                addBitmapToMemoryCache(Integer.toString(item), bitmap);
 
                 return bitmap;
             }catch(IOException e) {
@@ -279,11 +282,12 @@ public class ContactPageFragment extends Fragment {
             return null;
         }
 
+
         @Override
         public void onPostExecute(Bitmap image) {
             if (image != null) {
-                Log.i("info","Add bit map to cach = " + Integer.toString(item));
-                addBitmapToMemoryCache(Integer.toString(item), image);
+                //Log.i("info","Add bit map to cach = " + Integer.toString(item));
+                //addBitmapToMemoryCache(Integer.toString(item), image);
                 View v = listView.getChildAt(item);
                 if (v != null) {
                     ImageView iv = (ImageView)v.findViewById(R.id.icon);

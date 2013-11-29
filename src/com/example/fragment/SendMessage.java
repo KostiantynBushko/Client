@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -41,7 +43,10 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -60,11 +65,22 @@ public class SendMessage extends Fragment {
     private EditText messageField = null;
     byte[] byteArray;
 
+    private final String TIME_FORMATER = "HH:mm:s yyyy/MM/dd";
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIME_FORMATER);
 
     private final String NAME = "name";
     private final String MSG = "msg";
+    private final String DATE = "date";
     private ListView listView;
     private ArrayList<HashMap<String, Object>> listMessage;
+
+    FrameLayout frameLayout;
+
+    private int firstVisibleItem = 0;
+    private int visibleCountItem = 0;
+    private int totalCountItem = 0;
+    private boolean isVisible = true;
+    private boolean scrollStatus = false;
 
     public SendMessage(){}
     public SendMessage(Bitmap image, String username, String email) {
@@ -112,6 +128,36 @@ public class SendMessage extends Fragment {
         listView = (ListView)root.findViewById(R.id.listView);
         listView.setDivider(null);
         listView.setDividerHeight(15);
+
+        frameLayout = (FrameLayout)root.findViewById(R.id.frameLayout);
+        messageField.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listView.smoothScrollToPosition(listView.getCount());
+            }
+        });
+
+        messageField.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                listView.smoothScrollToPosition(listView.getCount());
+            }
+        });
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int i) {
+                scrollStatus = true;
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int firstVisible, int visibleCount, int totalCount) {
+                firstVisibleItem = firstVisible;
+                visibleCountItem = visibleCount;
+                totalCountItem = totalCount;
+            }
+        });
+
         return root;
     }
 
@@ -129,16 +175,17 @@ public class SendMessage extends Fragment {
     }
 
     /* Add message to list */
-    private void addMessageToListView(String username, String message){
+    private void addMessageToListView(String username, String message, String dateTime){
         HashMap<String, Object>item = new HashMap<String, Object>();
         item.put(NAME,username);
         item.put(MSG,message);
+        item.put(DATE,dateTime);
         listMessage.add(item);
 
         if(listView.getAdapter() == null){
             SimpleAdapter adapter = new SimpleAdapter(getActivity(),listMessage,R.layout.message_item,
-                    new String[]{ NAME,MSG },
-                    new int[]{ R.id.text1, R.id.text2 });
+                    new String[]{ NAME,MSG,DATE },
+                    new int[]{ R.id.text1, R.id.text2, R.id.text3});
             listView.setAdapter(adapter);
         }else{
             ((SimpleAdapter)listView.getAdapter()).notifyDataSetChanged();
@@ -196,7 +243,7 @@ public class SendMessage extends Fragment {
             if(result == false) {
                 Toast.makeText(getActivity(),errorMessage,Toast.LENGTH_SHORT).show();
             } else{
-                addMessageToListView("me",messageField.getText().toString());
+                addMessageToListView("me",messageField.getText().toString(),simpleDateFormat.format(new Date()));
                 messageField.getText().clear();
             }
 
@@ -237,10 +284,16 @@ public class SendMessage extends Fragment {
                     if (jsonArray.length() > 0) {
                         for(int i=0; i<jsonArray.length(); i++) {
                             JSONObject object = jsonArray.getJSONObject(i).getJSONObject("fields");
-                            Log.i("info","time : " + object.getString("date"));
-                            Log.i("info"," - msg = " + object.getString("message") + " | " + object.getString("sender"));
-
-                            addMessageToListView(object.getString("sender"),object.getString("message"));
+                            SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                            String dateTime = "";
+                            try{
+                                Date date = inputFormat.parse(object.getString("date"));
+                                dateTime = simpleDateFormat.format(date);
+                            }catch (ParseException e){
+                                e.printStackTrace();
+                            }
+                            Log.i("info"," - msg = " + object.getString("message") + " | " + object.getString("sender") + dateTime);
+                            addMessageToListView(object.getString("sender"),object.getString("message"),dateTime);
                         }
                     }
                 } catch (JSONException e) {

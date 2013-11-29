@@ -14,13 +14,13 @@
             android:layout_height="match_parent"
             android:layout_width="280dp"
             android:orientation="vertical"
-            android:background="#ff99afa8"
+            android:background="#ff7f7f7f"
             android:layout_gravity="start" >
         <TextView
                 android:id="@+id/EditText01"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffaed7ff"
+                android:background="#ffcfcfcf"
                 android:textSize="30dp"
                 android:gravity="center"
                 android:layout_marginRight="3dp"
@@ -32,9 +32,9 @@
                   android:layout_width="280dp"
                   android:layout_height="match_parent"
                   android:choiceMode="singleChoice"
-                  android:divider="#ff828a8c"
+                  android:divider="#ffa5a5a5"
                   android:dividerHeight="1dp"
-                  android:background="#ff99afa8"
+                  android:background="#ff7f7f7f"
                   android:paddingLeft="15sp"
                   android:paddingRight="15sp"/>
     </LinearLayout>

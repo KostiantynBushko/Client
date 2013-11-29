@@ -34,6 +34,7 @@ public class NavigationDrawer extends Activity {
             "com.example.fragment.OpenFileFragment",
             "com.example.fragment.ContactPageFragment",
             "com.example.fragment.ContactPageFragment",
+            "com.example.fragment.GMapFragment",
             "com.example.fragment.ServiceManager"
     };
     @Override
@@ -66,8 +67,11 @@ public class NavigationDrawer extends Activity {
                     public void onDrawerClosed(View drawerView) {
                         super.onDrawerClosed(drawerView);
                         if (currentFragment != position){
+                            int prev = currentFragment;
                             currentFragment = position;
+                            Fragment fragment = getFragmentManager().findFragmentByTag(fragments[prev]);
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                            transaction.remove(fragment);
                             transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[currentFragment]),
                                     fragments[currentFragment]);
                             transaction.commit();

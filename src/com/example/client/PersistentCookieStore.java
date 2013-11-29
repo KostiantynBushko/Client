@@ -4,7 +4,6 @@ package com.example.client;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Log;
 
 import org.apache.http.client.CookieStore;
 import org.apache.http.cookie.Cookie;
@@ -49,7 +48,7 @@ public class PersistentCookieStore implements CookieStore {
                 if(encodedCookie != null) {
                     Cookie decodedCookie = decodeCookie(encodedCookie);
                     if(decodedCookie != null) {
-                        Log.i("info","Cokie : " + decodedCookie.toString());
+                        //Log.i("info","Cokie : " + decodedCookie.toString());
                         cookies.put(name, decodedCookie);
                     }
                 }

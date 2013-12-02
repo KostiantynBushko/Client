@@ -1,13 +1,14 @@
 package com.example.client;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -18,7 +19,7 @@ import android.widget.ListView;
 /**
  * Created by kbushko on 11/6/13.
  */
-public class NavigationDrawer extends Activity {
+public class NavigationDrawer extends FragmentActivity {
 
     private String[] drawerItems;
     private ListView drawerListView;
@@ -39,6 +40,7 @@ public class NavigationDrawer extends Activity {
     };
     @Override
     protected void onCreate(Bundle savedInstaceState) {
+        Log.i("info"," NavigationDrawer [ onCreate ]");
         super.onCreate(savedInstaceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
@@ -54,24 +56,15 @@ public class NavigationDrawer extends Activity {
             public void onItemClick(AdapterView<?> adapterView, View view, final int position, long l) {
                 drawerLayout.setDrawerListener(new DrawerLayout.SimpleDrawerListener() {
                     @Override
-                    public void onDrawerSlide(View drawerView, float slideOffset) {
-                        super.onDrawerSlide(drawerView, slideOffset);
-                    }
-
+                    public void onDrawerSlide(View drawerView, float slideOffset) { super.onDrawerSlide(drawerView, slideOffset); }
                     @Override
-                    public void onDrawerOpened(View drawerView) {
-                        super.onDrawerOpened(drawerView);
-                    }
-
+                    public void onDrawerOpened(View drawerView) { super.onDrawerOpened(drawerView); }
                     @Override
                     public void onDrawerClosed(View drawerView) {
                         super.onDrawerClosed(drawerView);
                         if (currentFragment != position){
-                            int prev = currentFragment;
                             currentFragment = position;
-                            Fragment fragment = getFragmentManager().findFragmentByTag(fragments[prev]);
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                            transaction.remove(fragment);
                             transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[currentFragment]),
                                     fragments[currentFragment]);
                             transaction.commit();
@@ -115,13 +108,13 @@ public class NavigationDrawer extends Activity {
 
     @Override
     public void onStop(){
-        super.onStop();
         /* Save last opened fragment in the preferences */
         SharedPreferences sharedPreferences = PreferenceManager
                 .getDefaultSharedPreferences(getBaseContext());
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putInt(CURRENT_FRAGMNET,currentFragment);
         editor.commit();
+        super.onStop();
     }
     @Override
     public void onSaveInstanceState(Bundle outState) {

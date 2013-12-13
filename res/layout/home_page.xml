@@ -35,7 +35,20 @@
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/icon"
                         android:layout_marginLeft="35dp"/>
-             </RelativeLayout>
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="app version"
+                        android:id="@+id/app_version"
+                        android:layout_alignBottom="@+id/icon"
+                        android:layout_alignLeft="@+id/upload"
+                        android:layout_alignStart="@+id/upload"
+                        android:layout_alignRight="@+id/upload"
+                        android:layout_alignEnd="@+id/upload"
+                        android:gravity="center"/>
+            </RelativeLayout>
 
             <TextView
                     android:layout_width="match_parent"

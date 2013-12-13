@@ -50,7 +50,6 @@ public class TrackingService extends Service implements LocationListener{
         } else {
             Toast.makeText(getApplicationContext(),"gps service is not enable",Toast.LENGTH_SHORT).show();
         }
-        //runTask();
         return super.onStartCommand(intent,flag,startId);
     }
 

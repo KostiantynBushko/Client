@@ -13,6 +13,9 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.facebook.Session;
+import com.facebook.android.Facebook;
+
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -46,6 +49,10 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     private String message = "";
     private String title = "";
 
+    String APP_ID = getString(R.string.app_id);
+    Facebook facebook = new Facebook(APP_ID);
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +64,11 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
         Button SigIn = (Button)findViewById(R.id.bSigIn);
         Button Registered = (Button)findViewById(R.id.bRegistration);
+        Button fb = (Button)findViewById(R.id.facebook);
         SigIn.setOnClickListener(this);
         Registered.setOnClickListener(this);
+        fb.setOnClickListener(this);
+
     }
 
     @Override
@@ -88,6 +98,9 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 Intent intent = new Intent(this, RegisteredActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.facebook:
+                loginWithFaceBook();
+                break;
             default: break;
         }
     }
@@ -96,6 +109,14 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     public void onResume(){
         super.onResume();
         overridePendingTransition(R.anim.in_a,R.anim.out_a);
+    }
+
+    private void loginWithFaceBook() {
+        if (facebook.isSessionValid()) {
+            Session session = facebook.getSession();
+        }else {
+
+        }
     }
 
     /**********************************************************************************************/

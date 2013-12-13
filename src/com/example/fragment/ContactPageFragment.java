@@ -154,7 +154,8 @@ public class ContactPageFragment extends Fragment {
                 String email = (String)object.get(EMAIL);
 
                 mShowingBack = true;
-                getFragmentManager().beginTransaction().setCustomAnimations(
+
+                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(
                         R.animator.card_flip_right_in, R.animator.card_flip_right_out,
                         R.animator.card_flip_left_in, R.animator.card_flip_left_out)
                         .replace(R.id.content_frame, new SendMessage(image,username,email))
@@ -251,11 +252,9 @@ public class ContactPageFragment extends Fragment {
 
     class DownloadImage extends AsyncTask<String, Void, Bitmap> {
         int item = 0;
-
         public DownloadImage(int item){
             this.item = item;
         }
-
         @Override
         protected Bitmap doInBackground(String... url) {
             HttpParams httpParams = new BasicHttpParams();
@@ -281,13 +280,9 @@ public class ContactPageFragment extends Fragment {
             }
             return null;
         }
-
-
         @Override
         public void onPostExecute(Bitmap image) {
             if (image != null) {
-                //Log.i("info","Add bit map to cach = " + Integer.toString(item));
-                //addBitmapToMemoryCache(Integer.toString(item), image);
                 View v = listView.getChildAt(item);
                 if (v != null) {
                     ImageView iv = (ImageView)v.findViewById(R.id.icon);

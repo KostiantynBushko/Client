@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Window;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -30,14 +31,42 @@ public class MainActivity extends FragmentActivity {
 
     private String message = "";
     private String title = "";
+    TextView textView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.main);
+        textView = (TextView)this.findViewById(R.id.textView);
+
+        /*Session.openActiveSession(this, true, new Session.StatusCallback() {
+            @Override
+            public void call(Session session, SessionState state, Exception exception) {
+                textView.setText("-/-/-");/
+                if(session.isOpened()){
+                    textView.setText("-/--/-");
+                    Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+                        @Override
+                        public void onCompleted(GraphUser user, Response response) {
+                            textView.setText("-/-");
+                            if (user != null) {
+                                textView.setText(user.getName());
+                            }
+                        }
+                    });
+                }
+            }
+        });*/
+
         new ChecAuthentication().execute(URL.host + "/check/");
 	}
+
+    /*@Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+    }*/
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -99,5 +128,4 @@ public class MainActivity extends FragmentActivity {
             }
         }
     }
-
 }

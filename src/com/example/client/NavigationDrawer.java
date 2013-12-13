@@ -89,6 +89,8 @@ public class NavigationDrawer extends FragmentActivity {
                     fragments[currentFragment]);
             transaction.commit();
         }
+
+        //GCMImplementation gcmImplementation = new GCMImplementation(this);
     }
 
     @Override
@@ -116,12 +118,12 @@ public class NavigationDrawer extends FragmentActivity {
         editor.commit();
         super.onStop();
     }
-    @Override
+    /*@Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-    }
+    }*/
 }

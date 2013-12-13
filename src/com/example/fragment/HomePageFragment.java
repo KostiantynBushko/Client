@@ -2,6 +2,8 @@ package com.example.fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -19,6 +21,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.client.MainActivity;
 import com.example.client.R;
@@ -110,6 +113,9 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
             }
         });
         new DownloadImage().execute(URL.host + "/load/");
+
+        TextView app_verssion = (TextView)root.findViewById(R.id.app_version);
+        app_verssion.setText(Integer.toString(getAppVersion(getActivity().getApplicationContext())));
 
         return root;
     }
@@ -358,5 +364,15 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
 
         byte[] array = os.toByteArray();
         return BitmapFactory.decodeByteArray(array, 0, array.length);
+    }
+
+    private static int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            return packageInfo.versionCode;
+        }catch (PackageManager.NameNotFoundException e) {
+            throw new RuntimeException("Could not get package name: " + e);
+        }
     }
 }

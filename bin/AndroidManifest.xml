@@ -5,23 +5,73 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="17" />
+        android:minSdkVersion="16"
+        android:targetSdkVersion="19" />
+
+    <permission
+            android:name="com.example.client.permission.MAPS_RECEIVE"
+            android:protectionLevel="signature"></permission>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+
+    <!-- Google map API v2 use OpenGL 2.0 -->
+    <uses-feature
+            android:glEsVersion="0x00020000"
+            android:required="true"/>
 
     <application
+        android:name="com.example.client.SApplication"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppBaseTheme">
+
+        <uses-library android:name="com.google.android.maps" />
+        <meta-data
+                android:name="com.google.android.maps.v2.API_KEY"
+                android:value="AIzaSyAB1-je9VXxMZY_dW7TXhxbzZUyEBJtT4w"/>
+
+
         <activity
             android:name="com.example.client.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:configChanges="orientation">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
+        <activity android:name="RegisteredActivity"></activity>
+        <activity android:name="LoginActivity"></activity>
+        <activity android:name="HomePageActivity"></activity>
+        <activity android:name="NavigationDrawer"></activity>
+        <activity
+                android:name="SqLiteEditorActivity"
+                android:label="SqLite 3 Editor"
+                android:icon="@drawable/db">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:mimeType="*/*"/>
+            </intent-filter>
+        </activity>
+        
+        <service
+                android:name="com.example.services.ShortMessageService"
+                android:process=":shortmessageservice"
+                android:enabled="true"
+                ></service>
+        <service android:name="com.example.services.TrackingService"
+                 android:process=":trackingservice"
+                 android:enabled="true"></service>
+
     </application>
 
 </manifest>

@@ -27,7 +27,7 @@
             android:id="@+id/bRegistration"
             android:textColor="#ff656565"
             android:background="@drawable/button_action"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="10dp"
             android:layout_below="@+id/bSigIn"
             android:layout_marginLeft="30dp"
             android:layout_marginRight="30dp"
@@ -58,5 +58,18 @@
             android:layout_alignRight="@+id/bSigIn"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="30dp"/>
+
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="facebook login"
+            android:id="@+id/facebook"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/facebook_button"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="#fffff0"/>
 
 </RelativeLayout>

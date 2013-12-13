@@ -32,14 +32,10 @@ public class PersistentCookieStore implements CookieStore {
     private final ConcurrentHashMap<String, Cookie> cookies;
     private final SharedPreferences cookiePrefs;
 
-    /**
-     * Construct a persistent cookie store.
-     */
     public PersistentCookieStore(Context context) {
         cookiePrefs = context.getSharedPreferences(COOKIE_PREFS, 0);
         cookies = new ConcurrentHashMap<String, Cookie>();
 
-        // Load any previously stored cookies into the store
         String storedCookieNames = cookiePrefs.getString(COOKIE_NAME_STORE, null);
         if(storedCookieNames != null) {
             String[] cookieNames = TextUtils.split(storedCookieNames, ",");
@@ -48,13 +44,10 @@ public class PersistentCookieStore implements CookieStore {
                 if(encodedCookie != null) {
                     Cookie decodedCookie = decodeCookie(encodedCookie);
                     if(decodedCookie != null) {
-                        //Log.i("info","Cokie : " + decodedCookie.toString());
                         cookies.put(name, decodedCookie);
                     }
                 }
             }
-
-            // Clear out expired cookies
             clearExpired(new Date());
         }
     }
@@ -82,7 +75,6 @@ public class PersistentCookieStore implements CookieStore {
         // Clear cookies from local store
         cookies.clear();
 
-        // Clear cookies from persistent store
         SharedPreferences.Editor prefsWriter = cookiePrefs.edit();
         for(String name : cookies.keySet()) {
             prefsWriter.remove(COOKIE_NAME_PREFIX + name);
@@ -100,23 +92,17 @@ public class PersistentCookieStore implements CookieStore {
             String name = entry.getKey();
             Cookie cookie = entry.getValue();
             if(cookie.isExpired(date)) {
-                // Clear cookies from local store
+
                 cookies.remove(name);
-
-                // Clear cookies from persistent store
                 prefsWriter.remove(COOKIE_NAME_PREFIX + name);
-
-                // We've cleared at least one
                 clearedAny = true;
             }
         }
 
-        // Update names in persistent store
         if(clearedAny) {
             prefsWriter.putString(COOKIE_NAME_STORE, TextUtils.join(",", cookies.keySet()));
         }
         prefsWriter.commit();
-
         return clearedAny;
     }
 
@@ -124,11 +110,6 @@ public class PersistentCookieStore implements CookieStore {
     public List<Cookie> getCookies() {
         return new ArrayList<Cookie>(cookies.values());
     }
-
-
-    //
-    // Cookie serialization/deserialization
-    //
 
     protected String encodeCookie(SerializableCookie cookie) {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -156,8 +137,6 @@ public class PersistentCookieStore implements CookieStore {
         return cookie;
     }
 
-    // Using some super basic byte array <-> hex conversions so we don't have
-    // to rely on any large Base64 libraries. Can be overridden if you like!
     protected String byteArrayToHexString(byte[] b) {
         StringBuffer sb = new StringBuffer(b.length * 2);
         for (byte element : b) {

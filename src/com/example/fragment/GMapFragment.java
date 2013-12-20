@@ -32,6 +32,8 @@ public class GMapFragment extends Fragment {
     private Marker marker = null;
 
     private static View view;
+    BroadcastReceiver broadcastReceiver;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanseState) {
         Log.i("info"," - GMapFragment [ onCreate ]" );
@@ -44,8 +46,6 @@ public class GMapFragment extends Fragment {
             view = inflater.inflate(R.layout.map_fragment, container, false);
             map = ((MapFragment)getFragmentManager().findFragmentById(R.id.map)).getMap();
             map.setMapType(1);
-            //map.setMyLocationEnabled(true);
-            //map.setOnCameraChangeListener();
         }catch (InflateException e) {
             e.printStackTrace();
         }
@@ -55,34 +55,37 @@ public class GMapFragment extends Fragment {
 
     @Override
     public void onResume() {
-        super.onResume();
         getActivity().startService(new Intent(getActivity(),TrackingService.class));
-        BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 LatLng position = new LatLng(intent.getFloatExtra("latitude",0),intent.getFloatExtra("longitude",0));
-                if (marker != null)
-                    marker.remove();
-                map.clear();
-                marker = map.addMarker(new MarkerOptions()
-                        .position(position)
-                        .title("My location"));
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(position)
-                        .zoom(17)
-                        .tilt(30)
-                        .build();
-                map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                if (map != null){
+                    if (marker != null){
+                        marker.remove();
+                    }
+                    map.clear();
+                    marker = map.addMarker(new MarkerOptions()
+                            .position(position)
+                            .title("My location"));
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(position)
+                            .zoom(17)
+                            .tilt(30)
+                            .build();
+                    map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }
             }
         };
         IntentFilter intentFilter = new IntentFilter(TrackingService.BROADCAST_LOCATION_CHANGE_ACTION);
         getActivity().registerReceiver(broadcastReceiver, intentFilter);
-
+        super.onResume();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        getActivity().unregisterReceiver(broadcastReceiver);
         getActivity().stopService(new Intent(getActivity(),TrackingService.class));
     }
 

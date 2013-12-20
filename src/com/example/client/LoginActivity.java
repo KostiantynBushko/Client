@@ -49,8 +49,8 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     private String message = "";
     private String title = "";
 
-    String APP_ID = getString(R.string.app_id);
-    Facebook facebook = new Facebook(APP_ID);
+    String APP_ID;
+    Facebook facebook;
 
 
     @Override
@@ -58,6 +58,9 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.login);
+
+        APP_ID = getString(R.string.app_id);
+        facebook = new Facebook(APP_ID);
 
         eUserName = (EditText)findViewById(R.id.eUsername);
         ePassword = (EditText)findViewById(R.id.ePassword);
@@ -188,6 +191,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
             progressDialog.dismiss();
             progressDialog.cancel();
+
 
             if (result == true) {
                 Log.i("info","Success login");

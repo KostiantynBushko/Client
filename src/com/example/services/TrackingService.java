@@ -21,8 +21,8 @@ public class TrackingService extends Service implements LocationListener{
 
     private static final long  MIN_UPDATE_TIME_MS = 1000;
     private static final float MIN_UPDATE_DISTANCE = 1;
-    LocationManager locationManager;
-    Intent intent = new Intent(BROADCAST_LOCATION_CHANGE_ACTION);
+    private LocationManager locationManager;
+    private Intent intent;
 
     public final static String BROADCAST_LOCATION_CHANGE_ACTION = "com.example.service.trackingservice.location";
     @Override
@@ -33,13 +33,15 @@ public class TrackingService extends Service implements LocationListener{
     @Override
     public void onCreate() {
         Log.i("info"," TrackingService [ onCreate ]");
+        intent = new Intent(BROADCAST_LOCATION_CHANGE_ACTION);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         super.onCreate();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flag, int startId) {
         Log.i("info"," TrakingService [ onStartCommand ]");
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (location != null) {

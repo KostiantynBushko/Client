@@ -14,6 +14,7 @@
         <item>Map</item>
         <item>Service Manager</item>
         <item>Restaurants</item>
+        <item>Browser</item>
     </string-array>
 
     <string name="drawer_open">Open navigation drawer</string>

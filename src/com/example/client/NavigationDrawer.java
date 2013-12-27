@@ -37,7 +37,8 @@ public class NavigationDrawer extends FragmentActivity {
             "com.example.fragment.ContactPageFragment",
             "com.example.fragment.GMapFragment",
             "com.example.fragment.ServiceManager",
-            "com.example.fragment.RestaurantList"
+            "com.example.fragment.RestaurantList",
+            "com.example.fragment.WebViewFragment"
     };
     @Override
     protected void onCreate(Bundle savedInstaceState) {

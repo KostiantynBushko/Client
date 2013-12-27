@@ -44,5 +44,38 @@
             android:id="@+id/listView"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_above="@+id/button"/>
+            android:layout_above="@+id/start"/>
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start"
+            android:id="@+id/start"
+            android:layout_above="@+id/button"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Stop"
+            android:id="@+id/stop"
+            android:layout_above="@+id/button"
+            android:layout_toRightOf="@+id/start"/>
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bind"
+            android:id="@+id/bind"
+            android:layout_above="@+id/button2"
+            android:layout_toRightOf="@+id/stop"/>
+
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Unbind"
+            android:id="@+id/unbind"
+            android:layout_below="@+id/listView"
+            android:layout_toRightOf="@+id/bind"/>
 </RelativeLayout>

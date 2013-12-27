@@ -43,6 +43,10 @@ import java.util.List;
 
 public class LoginActivity extends Activity implements View.OnClickListener{
 
+    public static final String PARAM_AUTHTOKEN_TYPE = "authtokenType";
+    public static final String PARAM_USERNAME = "username";
+    public static final String PARAM_PASSWORD = "password";
+
     EditText eUserName = null;
     EditText ePassword = null;
 
@@ -177,7 +181,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
 
             } catch (IOException e) {
                 title = "Worning";
-                message = "Server don't response";
+                message = "Server doesn't response";
                 result = false;
                 e.printStackTrace();
             }

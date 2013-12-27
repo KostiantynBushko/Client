@@ -1,6 +1,8 @@
 package com.example.fragment;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -55,16 +57,16 @@ public class ContactPageFragment extends Fragment {
     private int countItems = 0;
 
     ArrayList<HashMap<String, Object>>listContact;
-    private static String NAME = "name";
-    private static String EMAIL = "email";
-    private static String U_ID = "u_id";
-    private static final String ICON = "icon";
+    private static final String NAME  = "name";
+    private static final String EMAIL = "email";
+    private static final String U_ID  = "u_id";
+    private static final String ICON  = "icon";
     private ListView listView;
 
     private int firstVisibleItem = 0;
     private int visibleCountItem = 0;
 
-    boolean is_runing = false;
+    boolean isRunning = false;
     LruCache<String, Bitmap>mMemoryCach;
     boolean mShowingBack = false;
     ViewGroup root;
@@ -83,6 +85,11 @@ public class ContactPageFragment extends Fragment {
         final int cacheSize = maxMemory;
         Log.i("info","maxMemory = " + Integer.toString(maxMemory / 1024) + "Kb");
         Log.i("info","cacheSize = " + Integer.toString(cacheSize / 1024) + "Kb");
+
+        FragmentManager fragmentManager = getActivity().getFragmentManager();
+        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
+        fragmentTransaction.addToBackStack(ContactPageFragment.class.getName());
+
 
         mMemoryCach = new LruCache<String, Bitmap>(cacheSize) {
             @Override
@@ -110,23 +117,16 @@ public class ContactPageFragment extends Fragment {
         countItems = 0;
         offset = 0;
         limit = GET_ITEM_LIMIT;
+
         listView = (ListView)root.findViewById(R.id.listView);
         listContact = new ArrayList<HashMap<String, Object>>();
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {}
-
             @Override
             public void onScroll(AbsListView absListView, int firstVisible, int visibleCount, int totalCount) {
                 firstVisibleItem = firstVisible;
                 visibleCountItem = visibleCount;
-
-                if (++firstVisible + visibleCount > totalCount && totalCount > 0){//++firstVisible + visibleCount > totalCount && totalCount > 0
-                    if (!is_runing){
-                        is_runing = true;
-                        new LoadContactTask().execute(URL.host + "/user_list/");
-                    }
-                }
                 for (int i=0; i<visibleCount; i++){
                     View v = absListView.getChildAt(i);
                     ImageView iv = (ImageView)v.findViewById(R.id.icon);
@@ -137,23 +137,22 @@ public class ContactPageFragment extends Fragment {
                         }
                     }
                 }
+                if (++firstVisible + visibleCount > totalCount && totalCount > 0){
+                    if (!isRunning){
+                        isRunning = true;
+                        new LoadContactTask().execute(URL.host + "/user_list/");
+                    }
+                }
             }
         });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int item, long l) {
-                if(mShowingBack) {
-                    getFragmentManager().popBackStack();
-                    return;
-                }
-
                 HashMap<String, Object>object = listContact.get(item);
                 Bitmap image = getBitmapFromMemCache(Integer.toString(item));
                 String username = (String)object.get(NAME);
                 String email = (String)object.get(EMAIL);
-
-                mShowingBack = true;
 
                 getActivity().getFragmentManager().beginTransaction().setCustomAnimations(
                         R.animator.card_flip_right_in, R.animator.card_flip_right_out,
@@ -166,7 +165,6 @@ public class ContactPageFragment extends Fragment {
 
         loadContactTask = new LoadContactTask();
         loadContactTask.execute(URL.host + "/user_list/");
-
         super.onResume();
     }
     @Override
@@ -175,7 +173,7 @@ public class ContactPageFragment extends Fragment {
         loadContactTask.cancel(true);
     }
 
-
+    /* Load contact task */
     class LoadContactTask extends AsyncTask<String, Void, Boolean> {
         String response = "";
         @Override
@@ -202,7 +200,6 @@ public class ContactPageFragment extends Fragment {
             }
             return true;
         }
-
         @Override
         protected void onPostExecute(Boolean result){
             super.onPostExecute(result);
@@ -238,21 +235,22 @@ public class ContactPageFragment extends Fragment {
                             adapter.notifyDataSetChanged();
                         }
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }else{
-                Toast toast = Toast.makeText(getActivity().getApplicationContext(),"Error coonnection...",Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getActivity().getApplicationContext(),"Error connection...",Toast.LENGTH_SHORT);
                 toast.show();
             }
-            is_runing = false;
+            isRunning = false;
         }
     }
 
+    /* Download image task */
     class DownloadImage extends AsyncTask<String, Void, Bitmap> {
         int item = 0;
-        public DownloadImage(int item){
+        Bitmap bitmap = null;
+        public DownloadImage(int item) {
             this.item = item;
         }
         @Override
@@ -270,11 +268,14 @@ public class ContactPageFragment extends Fragment {
             try {
                 HttpResponse httpResponse = httpClient.execute(httpGet,httpContext);
                 byte[] image = EntityUtils.toByteArray(httpResponse.getEntity());
-                Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
-                Log.i("info","Add bit map to cach = " + Integer.toString(item));
-                addBitmapToMemoryCache(Integer.toString(item), bitmap);
-
+                bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
+                if (bitmap != null) {
+                    addBitmapToMemoryCache(Integer.toString(item), bitmap);
+                }else{
+                    return null;
+                }
                 return bitmap;
+
             }catch(IOException e) {
                 e.printStackTrace();
             }
@@ -283,15 +284,13 @@ public class ContactPageFragment extends Fragment {
         @Override
         public void onPostExecute(Bitmap image) {
             if (image != null) {
-                View v = listView.getChildAt(item);
-                if (v != null) {
-                    ImageView iv = (ImageView)v.findViewById(R.id.icon);
-                    if (iv != null) {
-                        Log.i("info"," + ");
-                        iv.setImageBitmap(image);
+                View view = listView.getChildAt(item - firstVisibleItem);
+                if (view != null) {
+                    ImageView imageView = (ImageView)view.findViewById(R.id.icon);
+                    if (imageView != null) {
+                        imageView.setImageBitmap(image);
                     }
                 }
-                Log.i("info", " Cache current size = " + mMemoryCach.size() / 1024 + "Kb");
             }
         }
     }

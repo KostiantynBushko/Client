@@ -68,6 +68,7 @@ public class NavigationDrawer extends FragmentActivity {
                             FragmentTransaction transaction = getFragmentManager().beginTransaction();
                             transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[currentFragment]),
                                     fragments[currentFragment]);
+                            transaction.addToBackStack(fragments[currentFragment]);
                             transaction.commit();
                         }
                     }
@@ -81,17 +82,16 @@ public class NavigationDrawer extends FragmentActivity {
             }
         });
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        currentFragment = sharedPreferences.getInt(CURRENT_FRAGMNET,0);
 
         if (savedInstaceState == null){
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            currentFragment = sharedPreferences.getInt(CURRENT_FRAGMNET,0);
             FragmentTransaction transaction = getFragmentManager().beginTransaction();
             transaction.replace(R.id.content_frame, Fragment.instantiate(NavigationDrawer.this, fragments[currentFragment]),
                     fragments[currentFragment]);
+            transaction.addToBackStack(fragments[currentFragment]);
             transaction.commit();
         }
-
-        //GCMImplementation gcmImplementation = new GCMImplementation(this);
     }
 
     @Override
@@ -119,12 +119,13 @@ public class NavigationDrawer extends FragmentActivity {
         editor.commit();
         super.onStop();
     }
-    /*@Override
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
     }
     @Override
     public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-    }*/
+    }
 }

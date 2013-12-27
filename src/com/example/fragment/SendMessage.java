@@ -250,9 +250,7 @@ public class SendMessage extends Fragment {
         }
     }
 
-
     /* Message list */
-
     class GetMessageListtask extends AsyncTask<String, Void, Boolean> {
         String response = "";
         @Override
@@ -292,15 +290,13 @@ public class SendMessage extends Fragment {
                             }catch (ParseException e){
                                 e.printStackTrace();
                             }
-                            Log.i("info"," - msg = " + object.getString("message") + " | " + object.getString("sender") + dateTime);
+                            //Log.i("info"," - msg = " + object.getString("message") + " | " + object.getString("sender") + dateTime);
                             addMessageToListView(object.getString("sender"),object.getString("message"),dateTime);
                         }
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }else {
-
             }
         }
     }

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,6 +59,9 @@ public class ServiceManager extends Fragment {
         };
         IntentFilter intentFilter = new IntentFilter(TrackingService.BROADCAST_LOCATION_CHANGE_ACTION);
         getActivity().registerReceiver(broadcastReceiver, intentFilter);
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+
         return root;
     }
 

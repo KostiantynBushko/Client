@@ -3,11 +3,14 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffd8d8dc">
+    android:background="#ffd8d8dc"
+    android:weightSum="1">
 
     <ListView
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="231dp"
         android:id="@+id/listView"
-        android:background="#ffd8d8dc"/>
+        android:background="#ffd8d8dc"
+        android:layout_weight="1.01"/>
+
 </LinearLayout>

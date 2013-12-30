@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
@@ -30,21 +29,17 @@ public class NavigationDrawer extends FragmentActivity {
 
     final String[] fragments ={
             "com.example.fragment.HomePageFragment",
-            "com.example.fragment.ContactPageFragment",
             "com.example.fragment.FileExplorerFragment",
-            "com.example.fragment.OpenFileFragment",
-            "com.example.fragment.ContactPageFragment",
-            "com.example.fragment.ContactPageFragment",
-            "com.example.fragment.GMapFragment",
-            "com.example.fragment.ServiceManager",
+            "com.example.fragment.GMapFragment"
+            /*"com.example.fragment.ServiceManager",
             "com.example.fragment.RestaurantList",
-            "com.example.fragment.WebViewFragment"
+            "com.example.fragment.WebViewFragment"*/
     };
     @Override
     protected void onCreate(Bundle savedInstaceState) {
         Log.i("info"," NavigationDrawer [ onCreate ]");
         super.onCreate(savedInstaceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
         drawerLayout= (DrawerLayout)findViewById(R.id.drawer_layout);

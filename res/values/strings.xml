@@ -6,15 +6,8 @@
 
     <string-array name="items">
         <item>Home page</item>
-        <item>Contacts</item>
-        <item>Disk</item>
-        <item>File System</item>
-        <item>Events</item>
-        <item>Seting</item>
+        <item>Cloud</item>
         <item>Map</item>
-        <item>Service Manager</item>
-        <item>Restaurants</item>
-        <item>Browser</item>
     </string-array>
 
     <string name="drawer_open">Open navigation drawer</string>

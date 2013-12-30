@@ -10,6 +10,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.example.client.R;
+import com.example.common.WebAppInterface;
 
 /**
  * Created by kbushko on 12/27/13.
@@ -23,16 +24,16 @@ public class WebViewFragment extends Fragment {
 
         webView = (WebView)root.findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
-        webView.setWebViewClient(new WebViewClient(){
+        webView.setWebViewClient(new WebViewClient() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url){
-                Log.i("info"," Load : " + url);
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                Log.i("info", " Load : " + url);
                 view.loadUrl(url);
                 return false;
             }
         });
+        webView.addJavascriptInterface(new WebAppInterface(getActivity()), "Android");
         webView.loadUrl("file:///android_asset/index.html");
-        //webView.loadUrl("http://developer.android.com/");
         return root;
     }
 }

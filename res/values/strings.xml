@@ -6,8 +6,8 @@
 
     <string-array name="items">
         <item>Home page</item>
-        <item>Cloud</item>
         <item>Map</item>
+        <item>App</item>
     </string-array>
 
     <string name="drawer_open">Open navigation drawer</string>

@@ -1,9 +1,9 @@
 package com.example.fragment;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -21,9 +21,11 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.example.client.AppActivity;
 import com.example.client.R;
 import com.example.client.SApplication;
 import com.example.client.URL;
+import com.example.common.FileHelper;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -40,15 +42,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
 /**
- * Created by kbushko on 11/6/13.
+ * Created by kbushko on 12/31/13.
  */
-public class ContactPageFragment extends Fragment {
+public class AppStoreFragment extends Fragment {
 
     private final int GET_ITEM_LIMIT = 6;
     private JSONArray contacts;
@@ -56,47 +61,36 @@ public class ContactPageFragment extends Fragment {
     private int limit = GET_ITEM_LIMIT;
     private int countItems = 0;
 
-    ArrayList<HashMap<String, Object>>listContact;
+    ArrayList<HashMap<String, Object>> listApp;
     private static final String NAME  = "name";
-    private static final String EMAIL = "email";
+    private static final String PATH = "path";
     private static final String U_ID  = "u_id";
     private static final String ICON  = "icon";
+    private static final String DESCRIPTION  = "description";
     private ListView listView;
 
     private int firstVisibleItem = 0;
     private int visibleCountItem = 0;
 
     boolean isRunning = false;
-    LruCache<String, Bitmap>mMemoryCach;
+    LruCache<String, Bitmap> mMemoryCach;
     boolean mShowingBack = false;
     ViewGroup root;
     LoadContactTask loadContactTask;
 
-    public static Fragment newInstance(Context contewxt) {
-        ContactPageFragment contactPageFragment = new ContactPageFragment();
-        return contactPageFragment;
-    }
-
     @Override
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup viewGroup, Bundle savedInstanceState) {
-        root = (ViewGroup)layoutInflater.inflate(R.layout.contact_layout, null);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        root = (ViewGroup)inflater.inflate(R.layout.contact_layout, null);
 
-        final int maxMemory  = (int)(Runtime.getRuntime().maxMemory() / 1024);
+        /*final int maxMemory  = (int)(Runtime.getRuntime().maxMemory()/1024);
         final int cacheSize = maxMemory;
-        Log.i("info","maxMemory = " + Integer.toString(maxMemory / 1024) + "Kb");
-        Log.i("info","cacheSize = " + Integer.toString(cacheSize / 1024) + "Kb");
-
-        FragmentManager fragmentManager = getActivity().getFragmentManager();
-        FragmentTransaction fragmentTransaction = getActivity().getFragmentManager().beginTransaction();
-        fragmentTransaction.addToBackStack(ContactPageFragment.class.getName());
-
 
         mMemoryCach = new LruCache<String, Bitmap>(cacheSize) {
             @Override
             protected int sizeOf(String key, Bitmap bitmap){
                 return bitmap.getByteCount() /1024;
             }
-        };
+        };*/
         return root;
     }
 
@@ -113,13 +107,21 @@ public class ContactPageFragment extends Fragment {
 
     @Override
     public void onResume() {
-        mShowingBack = false;
         countItems = 0;
         offset = 0;
         limit = GET_ITEM_LIMIT;
 
+        final int maxMemory  = (int)(Runtime.getRuntime().maxMemory()/1024);
+        final int cacheSize = maxMemory;
+        mMemoryCach = new LruCache<String, Bitmap>(cacheSize) {
+            @Override
+            protected int sizeOf(String key, Bitmap bitmap){
+                return bitmap.getByteCount() /1024;
+            }
+        };
+
         listView = (ListView)root.findViewById(R.id.listView);
-        listContact = new ArrayList<HashMap<String, Object>>();
+        listApp = new ArrayList<HashMap<String, Object>>();
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int i) {}
@@ -140,7 +142,7 @@ public class ContactPageFragment extends Fragment {
                 if (++firstVisible + visibleCount > totalCount && totalCount > 0){
                     if (!isRunning){
                         isRunning = true;
-                        new LoadContactTask().execute(URL.host + "/user_list/");
+                        new LoadContactTask().execute(URL.host + "/app_list/");
                     }
                 }
             }
@@ -149,31 +151,36 @@ public class ContactPageFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int item, long l) {
-                HashMap<String, Object>object = listContact.get(item);
+                HashMap<String, Object>object = listApp.get(item);
                 Bitmap image = getBitmapFromMemCache(Integer.toString(item));
-                String username = (String)object.get(NAME);
-                String email = (String)object.get(EMAIL);
+                String name = (String)object.get(NAME);
+                String path = (String)object.get(PATH);
+                String description = (String)object.get(DESCRIPTION);
 
-                getActivity().getFragmentManager().beginTransaction().setCustomAnimations(
-                        R.animator.card_flip_right_in, R.animator.card_flip_right_out,
-                        R.animator.card_flip_left_in, R.animator.card_flip_left_out)
-                        .replace(R.id.content_frame, new SendMessage(image,username,email))
-                        .addToBackStack(null)
-                        .commit();
+
+                Intent intent = new Intent(getActivity(), AppActivity.class);
+                intent.putExtra("image",image);
+                intent.putExtra("name",name);
+                intent.putExtra("path",path);
+                intent.putExtra("description",description);
+
+                startActivity(intent);
             }
         });
 
         loadContactTask = new LoadContactTask();
-        loadContactTask.execute(URL.host + "/user_list/");
+        loadContactTask.execute(URL.host + "/app_list/");
         super.onResume();
     }
+
     @Override
     public void onStop() {
         super.onStop();
         loadContactTask.cancel(true);
     }
 
-    /* Load contact task */
+
+    /**********************************************************************************************/
     class LoadContactTask extends AsyncTask<String, Void, Boolean> {
         String response = "";
         @Override
@@ -209,25 +216,25 @@ public class ContactPageFragment extends Fragment {
                     contacts = new JSONArray(response.toString());
                     HashMap<String, Object>resurce;
                     int id = offset;
-                    Log.i("info"," contact length = " + Integer.toString(contacts.length()));
+                    Log.i("info", " contact length = " + Integer.toString(contacts.length()));
                     if (contacts.length() > 0){
                         offset += contacts.length();
                         for (int i = 0; i< contacts.length(); i++) {
                             App = contacts.getJSONObject(i);
                             App = App.getJSONObject("fields");
                             resurce = new HashMap<String, Object>();
-                            resurce.put(NAME, App.opt("username"));
-                            resurce.put(EMAIL, App.get("email"));
-                            resurce.put(ICON, R.drawable.default_user_icon_profile);
+                            resurce.put(NAME,App.opt("name"));
+                            resurce.put(PATH, App.opt("path"));
+                            resurce.put(ICON, R.drawable.app_icon);
                             resurce.put(U_ID,Integer.toString(id++));
-                            listContact.add(resurce);
-                            new DownloadImage(countItems++).execute(URL.host + "/load/?username=" + App.opt("username"));
-                            //new DownloadImage(countItems++).execute(URL.host + "/app_image/?path=" + App.opt("path"));
+                            resurce.put(DESCRIPTION,App.opt("description"));
+                            listApp.add(resurce);
+                            new DownloadImage(countItems++).execute(URL.host + "/app_image/?path=" + App.opt("path"));
                         }
 
                         if (listView.getAdapter() == null) {
-                            SimpleAdapter adapter = new SimpleAdapter(getActivity(), listContact,R.layout.contact_list_item,
-                                    new String[]{NAME,EMAIL,ICON,U_ID},
+                            SimpleAdapter adapter = new SimpleAdapter(getActivity(), listApp,R.layout.contact_list_item,
+                                    new String[]{NAME,PATH,ICON,U_ID},
                                     new int[]{R.id.text1, R.id.text2,R.id.icon, R.id.u_id});
                             listView.setAdapter(adapter);
                             listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
@@ -246,7 +253,7 @@ public class ContactPageFragment extends Fragment {
             isRunning = false;
         }
     }
-
+    /**********************************************************************************************/
     /* Download image task */
     class DownloadImage extends AsyncTask<String, Void, Bitmap> {
         int item = 0;
@@ -256,8 +263,9 @@ public class ContactPageFragment extends Fragment {
         }
         @Override
         protected Bitmap doInBackground(String... url) {
+            Log.i("info"," path = " + url[0]);
             HttpParams httpParams = new BasicHttpParams();
-            HttpConnectionParams.setConnectionTimeout(httpParams,10000);
+            HttpConnectionParams.setConnectionTimeout(httpParams, 10000);
             HttpConnectionParams.setSoTimeout(httpParams,10000);
 
             DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -280,7 +288,6 @@ public class ContactPageFragment extends Fragment {
             }catch(IOException e) {
                 e.printStackTrace();
             }
-            Log.i("info"," path = " + url[0]);
             return null;
         }
         @Override
@@ -297,4 +304,78 @@ public class ContactPageFragment extends Fragment {
         }
     }
 
+    /* open file */
+    class OpenFileTask extends AsyncTask<String, Void, Boolean> {
+        ProgressDialog progressDialog = null;
+        @Override
+        protected void onPreExecute(){
+            Context context = getActivity();
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setMessage("please wait...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progressDialog.dismiss();
+            progressDialog.cancel();
+        }
+
+        @Override
+        protected Boolean doInBackground(String... file) {
+            HttpParams httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams,10000);
+            HttpConnectionParams.setSoTimeout(httpParams,10000);
+
+            DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
+            HttpGet httpGet = null;
+            try {
+                httpGet = new HttpGet(URL.host + "/get_app/?path=" + URLEncoder.encode(file[0], "UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            HttpContext httpContext = new BasicHttpContext();
+            httpContext.setAttribute(ClientContext.COOKIE_STORE, SApplication.cookieStore);
+
+            try {
+                HttpResponse httpResponse = httpClient.execute(httpGet,httpContext);
+                Log.i("info", httpResponse.getFirstHeader("Content-length").toString());
+                byte[] _file_ = EntityUtils.toByteArray(httpResponse.getEntity());
+                File f = new File(get_cache_path(), file[2]);
+                FileOutputStream fos = new FileOutputStream(f);
+                fos.write(_file_, 0, _file_.length);
+                fos.flush();
+                fos.close();
+                byte[] newByte = new byte[15];
+                System.arraycopy(_file_, 0, newByte, 0, 15);
+                Log.i("info"," - files data = " + new String(_file_,"UTF-8"));
+                Intent intent = FileHelper.openFileIntent(f);
+                if(intent != null) {
+                    startActivity(FileHelper.openFileIntent(f));
+                    return true;
+                }else {
+                    return false;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+
+    }
+    private String get_cache_path(){
+        File cacheDir;
+        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)){
+            cacheDir=new File(android.os.Environment.getExternalStorageDirectory(),"Client");
+        }else {
+            cacheDir=getActivity().getCacheDir();
+        }
+
+        if(!cacheDir.exists())
+            cacheDir.mkdirs();
+        return cacheDir.getAbsolutePath();
+    }
 }

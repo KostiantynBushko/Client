@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.client"
+          xmlns:tools="http://schemas.android.com/tools"
+          package="com.example.client"
     android:versionCode="1"
     android:versionName="1.0" >
 
@@ -20,6 +21,8 @@
     <uset-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.INSTALL_PACKAGES"
+                     tools:ignore="ProtectedPermissions"/>
 
     <!-- Google map API v2 use OpenGL 2.0 -->
     <uses-feature
@@ -58,7 +61,10 @@
         <activity android:name="NavigationDrawer"
                   android:configChanges="orientation">
         </activity>
-        <activity android:name=".AppActivity"></activity>
+
+        <activity android:name=".AppActivity"
+                  android:screenOrientation="portrait">
+        </activity>
 
         <activity android:name="com.facebook.LoginActivity"></activity>
         <activity android:name="com.example.client.RestaurantActivity"></activity>

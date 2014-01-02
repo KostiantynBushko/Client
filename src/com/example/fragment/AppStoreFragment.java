@@ -81,16 +81,6 @@ public class AppStoreFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = (ViewGroup)inflater.inflate(R.layout.contact_layout, null);
-
-        /*final int maxMemory  = (int)(Runtime.getRuntime().maxMemory()/1024);
-        final int cacheSize = maxMemory;
-
-        mMemoryCach = new LruCache<String, Bitmap>(cacheSize) {
-            @Override
-            protected int sizeOf(String key, Bitmap bitmap){
-                return bitmap.getByteCount() /1024;
-            }
-        };*/
         return root;
     }
 
@@ -121,6 +111,8 @@ public class AppStoreFragment extends Fragment {
         };
 
         listView = (ListView)root.findViewById(R.id.listView);
+        listView.setDivider(null);
+        listView.setDividerHeight(15);
         listApp = new ArrayList<HashMap<String, Object>>();
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -233,7 +225,7 @@ public class AppStoreFragment extends Fragment {
                         }
 
                         if (listView.getAdapter() == null) {
-                            SimpleAdapter adapter = new SimpleAdapter(getActivity(), listApp,R.layout.contact_list_item,
+                            SimpleAdapter adapter = new SimpleAdapter(getActivity(), listApp,R.layout.app_list_item,
                                     new String[]{NAME,PATH,ICON,U_ID},
                                     new int[]{R.id.text1, R.id.text2,R.id.icon, R.id.u_id});
                             listView.setAdapter(adapter);
@@ -269,7 +261,9 @@ public class AppStoreFragment extends Fragment {
             HttpConnectionParams.setSoTimeout(httpParams,10000);
 
             DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(url[0]);
+            HttpGet httpGet = null;
+            String m_url = url[0].replace(" ","%20");
+            httpGet = new HttpGet(m_url);
 
             HttpContext httpContext = new BasicHttpContext();
             httpContext.setAttribute(ClientContext.COOKIE_STORE, SApplication.cookieStore);

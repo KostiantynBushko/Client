@@ -3,7 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#ffcac2ff">
+                android:background="#ffe2d9ff">
 
     <FrameLayout
             android:layout_width="fill_parent"
@@ -17,7 +17,7 @@
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                         android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="120dp"
                         android:orientation="horizontal"
                         android:padding="5dip" >
 
@@ -45,9 +45,10 @@
                     android:textSize="15dip"
                     android:textStyle="bold"
                     android:typeface="sans"
-                    android:layout_centerVertical="true"
+                    android:layout_alignParentTop="true"
                     android:layout_toRightOf="@+id/thumbnail"
-                    />
+                    android:layout_toLeftOf="@+id/u_id"
+                    android:layout_marginTop="5dp"/>
 
             <TextView
                     android:id="@+id/text2"
@@ -56,8 +57,11 @@
                     android:text="Just gona stand there and ..."
                     android:textColor="#343434"
                     android:textSize="12dip"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@+id/text1"
                     android:layout_toRightOf="@+id/thumbnail"
-                    android:layout_alignBottom="@+id/thumbnail"/>
+                    android:layout_marginTop="5dp"/>
 
             <TextView
                     android:layout_width="wrap_content"
@@ -66,6 +70,18 @@
                     android:id="@+id/u_id"
                     android:layout_alignParentTop="true"
                     android:layout_alignRight="@+id/text2"/>
+
+            <Button
+                    android:layout_width="100dp"
+                    android:layout_height="35dp"
+                    android:text=""
+                    android:id="@+id/action"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignRight="@+id/text2"
+                    android:layout_alignEnd="@+id/text2"
+                    android:textSize="15sp"
+                    android:textColor="#ffffffff"
+                    android:background="@drawable/button_rect"/>
         </RelativeLayout>
     </FrameLayout>
 
@@ -79,7 +95,7 @@
 
         <RelativeLayout
                 android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center">
 
             <TextView
@@ -88,28 +104,88 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:id="@+id/textView"
                     android:background="@drawable/separate_line"
-                    android:layout_centerHorizontal="true"/>
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"/>
 
-            <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="New Text"
-                    android:id="@+id/textView2"
-                    android:layout_alignParentBottom="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_below="@+id/button"/>
+            <ScrollView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:id="@+id/scrollView"
+                    android:layout_below="@+id/textView">
+                <RelativeLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
 
-            <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Install"
-                    android:id="@+id/button"
-                    android:layout_below="@+id/textView"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignParentEnd="true"/>
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:text=" Description:"
+                            android:id="@+id/textView2"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"/>
+
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="applicationdescription"
+                            android:id="@+id/description"
+                            android:layout_below="@+id/textView2"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginBottom="5dp"/>
+
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:text=" Rating:"
+                            android:id="@+id/textView3"
+                            android:layout_below="@+id/textView4"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"/>
+
+                    <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:background="@drawable/separate_line"
+                            android:layout_centerHorizontal="true"
+                            android:id="@+id/textView4"
+                            android:layout_below="@+id/description"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="5dp"/>
+                    <RatingBar
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/ratingBar"
+                            android:layout_below="@+id/textView3"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:isIndicator="true"
+                            android:focusable="false"
+                            android:clickable="false"/>
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:id="@+id/textView5"
+                            android:textColor="#FFFFFF"
+                            android:layout_alignTop="@+id/ratingBar"
+                            android:layout_alignRight="@+id/textView4"
+                            android:layout_alignEnd="@+id/textView4"
+                            android:layout_marginRight="10dp"/>
+
+                </RelativeLayout>
+
+            </ScrollView>
 
         </RelativeLayout>
     </FrameLayout>

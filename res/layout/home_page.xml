@@ -43,11 +43,20 @@
                         android:text="app version"
                         android:id="@+id/app_version"
                         android:layout_alignBottom="@+id/icon"
+                        android:layout_alignRight="@+id/upload"
+                        android:layout_alignEnd="@+id/upload"/>
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="version"
+                        android:id="@+id/textView5"
+                        android:layout_alignParentBottom="true"
+                        android:layout_toLeftOf="@+id/app_version"
                         android:layout_alignLeft="@+id/upload"
                         android:layout_alignStart="@+id/upload"
-                        android:layout_alignRight="@+id/upload"
-                        android:layout_alignEnd="@+id/upload"
-                        android:gravity="center"/>
+                        android:gravity="center"
+                        android:layout_marginRight="5dp"/>
             </RelativeLayout>
 
             <TextView
@@ -155,6 +164,19 @@
                     android:layout_marginLeft="5dp"
                     android:layout_marginBottom="5dp"
                     android:layout_marginTop="55dp"
+                    android:background="@drawable/button_action"
+                    android:textColor="#ff656565"/>
+            <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Upload App"
+                    android:id="@+id/uploadApp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
                     android:background="@drawable/button_action"
                     android:textColor="#ff656565"/>
         </LinearLayout>

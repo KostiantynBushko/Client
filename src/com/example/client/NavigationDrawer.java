@@ -31,7 +31,7 @@ public class NavigationDrawer extends FragmentActivity {
     final String[] fragments ={
             "com.example.fragment.HomePageFragment",
             /*"com.example.fragment.FileExplorerFragment",*/
-            "com.example.fragment.GMapFragment",
+            /*"com.example.fragment.GMapFragment",*/
             "com.example.fragment.AppStoreFragment"
             /*"com.example.fragment.RestaurantList",
             "com.example.fragment.WebViewFragment"*/

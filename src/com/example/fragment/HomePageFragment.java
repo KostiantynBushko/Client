@@ -27,6 +27,7 @@ import com.example.client.MainActivity;
 import com.example.client.R;
 import com.example.client.SApplication;
 import com.example.client.URL;
+import com.example.client.UploadAppActivity;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -113,6 +114,14 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
             }
         });
         new DownloadImage().execute(URL.host + "/load/");
+
+        ((Button)root.findViewById(R.id.uploadApp)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), UploadAppActivity.class);
+                startActivity(intent);
+            }
+        });
 
         TextView app_verssion = (TextView)root.findViewById(R.id.app_version);
         app_verssion.setText(Integer.toString(getAppVersion(getActivity().getApplicationContext())));
@@ -291,11 +300,11 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
             byte[] data = bos.toByteArray();
 
             try {
-                entity.addPart("photoId", new StringBody("photoId"));
+                entity.addPart("appIcon", new StringBody("appIcon"));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            entity.addPart("file", new ByteArrayBody(data, "image.png"/*imageName.toString()*/ ));
+            entity.addPart("file", new ByteArrayBody(data, "appIcon.png"/*imageName.toString()*/ ));
             httpPost.setEntity(entity);
 
             HttpContext httpContext = new BasicHttpContext();

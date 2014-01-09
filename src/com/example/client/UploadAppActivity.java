@@ -43,9 +43,14 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -59,13 +64,14 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
     Bitmap iconBitmap;
     Button uploadApk;
     String filePath = "";
+    String serverApkPath = null;
 
     String appName = null;
-    String description = null;
+    String description = "";
     String packageName = null;
     String versionName = null;
     String versionCode = null;
-    String url = null;
+    String url = "";
     Context context;
 
     int stackLavel = 1;
@@ -79,10 +85,12 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
 
         context = this;
 
+        //Upload button
         uploadApk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("info"," run upload apk");
+                description = ((EditText)findViewById(R.id.editText)).getText().toString();
+                url = ((EditText)findViewById(R.id.editText2)).getText().toString();
                 String[] param = {URL.host + "/add_app/"};
                 new CreateAppRepo(context).execute(param);
             }
@@ -135,11 +143,7 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
                 ((TextView)findViewById(R.id.versionName)).setText(versionName);
                 ((TextView)findViewById(R.id.versionCode)).setText(versionCode);
 
-                description = ((EditText)findViewById(R.id.editText)).getText().toString();
-                url = ((EditText)findViewById(R.id.editText2)).getText().toString();
-
                 uploadApk.setVisibility(View.VISIBLE);
-
 
             }
         }
@@ -200,14 +204,31 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
 
         @Override
         protected void onPostExecute(Boolean result) {
+            Log.i("info"," responce = " + response);
+            try {
+                JSONArray array = new JSONArray(response.toString());
+                JSONObject repo = array.getJSONObject(0);
+                repo = repo.getJSONObject("fields");
+                serverApkPath = repo.getString("path");
+                new UploadImage(context).execute(URL.host + "/upload_data/");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             progressDialog.dismiss();
             progressDialog.cancel();
         }
     }
     /**********************************************************************************************/
-    /* UPLOADING FILE */
+    /* Upload image file  */
     /**********************************************************************************************/
     class UploadImage extends AsyncTask<String, Void, Boolean> {
+
+        ProgressDialog progressDialog = null;
+        private Context context;
+        String response = "";
+        public UploadImage(Context context){
+            this.context = context;
+        }
 
         @Override
         protected Boolean doInBackground(String... url) {
@@ -218,17 +239,112 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
             HttpContext loadContext = new BasicHttpContext();
             HttpPost httpPost = new HttpPost(url[0]);
 
+            //MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            //builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
             MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             iconBitmap.compress(Bitmap.CompressFormat.PNG, 20, bos);
             byte[] data = bos.toByteArray();
 
+            entity.addPart("file_name", new ByteArrayBody(data, "image.png"));
             try {
-                entity.addPart("photoId", new StringBody("photoId"));
+                entity.addPart("file_path", new StringBody(serverApkPath));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            entity.addPart("file", new ByteArrayBody(data, "image.png"/*imageName.toString()*/ ));
+
+            httpPost.setEntity(entity);
+
+            /*builder.addPart("file", new ByteArrayBody(data, "image.png"));
+            builder.addTextBody("path",serverApkPath);
+
+            HttpEntity httpEntity = builder.build();
+            httpPost.setEntity(httpEntity);*/
+
+            HttpContext httpContext = new BasicHttpContext();
+            httpContext.setAttribute(ClientContext.COOKIE_STORE, SApplication.cookieStore);
+
+
+            try {
+                HttpResponse httpResponse = httpClient.execute(httpPost, httpContext);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+        @Override
+        protected void onPreExecute(){
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("upload image...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            progressDialog.dismiss();
+            progressDialog.cancel();
+            if (result){
+                new UploadApp(context).execute(URL.host + "/upload_data/");
+            }
+        }
+    }
+    /**********************************************************************************************/
+    /**********************************************************************************************/
+    /* Upload image file  */
+    /**********************************************************************************************/
+    class UploadApp extends AsyncTask<String, Void, Boolean> {
+
+        ProgressDialog progressDialog = null;
+        private Context context;
+        String response = "";
+        public UploadApp(Context context){
+            this.context = context;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... url) {
+            if (iconBitmap == null)
+                return false;
+
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpContext loadContext = new BasicHttpContext();
+            HttpPost httpPost = new HttpPost(url[0]);
+
+            //MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+            //builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+            byte[] fileContext;
+            File apk = new File(filePath);
+            try {
+                FileInputStream fileInputStream = new FileInputStream(apk);
+                fileContext = new byte[(int)apk.length()];
+                fileInputStream.read(fileContext);
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return false;
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            /*builder.addPart("file", new ByteArrayBody(fileContext,"app.apk"));
+            builder.addTextBody("path",serverApkPath);*/
+
+            //HttpEntity httpEntity = builder.build();
+            //httpPost.setEntity(httpEntity);
+
+            MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+            entity.addPart("file_name", new ByteArrayBody(fileContext, "app.apk" ));
+            try {
+                entity.addPart("file_path", new StringBody(serverApkPath));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+
             httpPost.setEntity(entity);
 
             HttpContext httpContext = new BasicHttpContext();
@@ -242,12 +358,19 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
             }
             return true;
         }
+        @Override
+        protected void onPreExecute(){
+            progressDialog = new ProgressDialog(context);
+            progressDialog.setMessage("upload apk...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }
 
         @Override
-        public void onPostExecute(Boolean result) {
-            Log.i("info", " Execute result = " + result.toString());
+        protected void onPostExecute(Boolean result) {
+            progressDialog.dismiss();
+            progressDialog.cancel();
         }
     }
-    /**********************************************************************************************/
     /**********************************************************************************************/
 }

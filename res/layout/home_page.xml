@@ -27,14 +27,16 @@
                         android:src="@drawable/default_user_icon_profile" />
 
                 <Button
-                        android:layout_width="159dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Upload"
+                        android:text="update"
                         android:id="@+id/upload"
                         android:background="@drawable/button_action"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@+id/icon"
-                        android:layout_marginLeft="35dp"/>
+                        android:layout_alignTop="@+id/icon"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="5dp"/>
 
                 <TextView
                         android:layout_width="wrap_content"
@@ -53,10 +55,9 @@
                         android:id="@+id/textView5"
                         android:layout_alignParentBottom="true"
                         android:layout_toLeftOf="@+id/app_version"
-                        android:layout_alignLeft="@+id/upload"
-                        android:layout_alignStart="@+id/upload"
                         android:gravity="center"
-                        android:layout_marginRight="5dp"/>
+                        android:layout_marginRight="5dp"
+                        android:layout_toRightOf="@+id/icon"/>
             </RelativeLayout>
 
             <TextView

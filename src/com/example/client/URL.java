@@ -5,6 +5,6 @@ package com.example.client;
  */
 public final class URL {
     //public static String host = "http://192.168.0.20:8000";
-    public static String host = "http://192.168.12.122:8002";
-   //public static String host = "http://mobile.svitla-informatics.com";
+    //public static String host = "http://192.168.12.122:8002";
+    public static String host = "http://mobile.svitla-informatics.com";
 }

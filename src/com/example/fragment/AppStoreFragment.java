@@ -67,6 +67,11 @@ public class AppStoreFragment extends Fragment {
     private static final String U_ID  = "u_id";
     private static final String ICON  = "icon";
     private static final String DESCRIPTION  = "description";
+    private static final String PACKAGE = "package";
+    private static final String APP_URL = "url";
+    private static final String DEVELOPER = "developer";
+    private static final String VERSION_NAME = "versionname";
+
     private ListView listView;
 
     private int firstVisibleItem = 0;
@@ -148,6 +153,10 @@ public class AppStoreFragment extends Fragment {
                 String name = (String)object.get(NAME);
                 String path = (String)object.get(PATH);
                 String description = (String)object.get(DESCRIPTION);
+                String packageName = (String)object.get(PACKAGE);
+                String versionName = (String)object.get(VERSION_NAME);
+                String developer = (String)object.get(DEVELOPER);
+                String url = (String)object.get(APP_URL);
 
 
                 Intent intent = new Intent(getActivity(), AppActivity.class);
@@ -155,6 +164,10 @@ public class AppStoreFragment extends Fragment {
                 intent.putExtra("name",name);
                 intent.putExtra("path",path);
                 intent.putExtra("description",description);
+                intent.putExtra("packageName",packageName);
+                intent.putExtra("versionName",versionName);
+                intent.putExtra("developer",developer);
+                intent.putExtra("url",url);
 
                 startActivity(intent);
             }
@@ -220,6 +233,10 @@ public class AppStoreFragment extends Fragment {
                             resurce.put(ICON, R.drawable.app_icon);
                             resurce.put(U_ID,Integer.toString(id++));
                             resurce.put(DESCRIPTION,App.opt("description"));
+                            resurce.put(PACKAGE,App.opt("packageName"));
+                            resurce.put(DEVELOPER,App.opt("user"));
+                            resurce.put(APP_URL,App.opt("url"));
+                            resurce.put(VERSION_NAME,App.opt("versionName"));
                             listApp.add(resurce);
                             new DownloadImage(countItems++).execute(URL.host + "/app_image/?path=" + App.opt("path"));
                         }

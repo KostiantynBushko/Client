@@ -300,11 +300,11 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
             byte[] data = bos.toByteArray();
 
             try {
-                entity.addPart("appIcon", new StringBody("appIcon"));
+                entity.addPart("image", new StringBody("image"));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-            entity.addPart("file", new ByteArrayBody(data, "appIcon.png"/*imageName.toString()*/ ));
+            entity.addPart("file", new ByteArrayBody(data, "image.png"/*imageName.toString()*/ ));
             httpPost.setEntity(entity);
 
             HttpContext httpContext = new BasicHttpContext();

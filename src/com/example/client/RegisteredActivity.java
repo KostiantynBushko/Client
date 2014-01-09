@@ -74,7 +74,7 @@ public class RegisteredActivity extends Activity implements View.OnClickListener
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.bSend:
-                new runHttpPost().execute("http://192.168.12.122:8002/new_user/");
+                new runHttpPost().execute(URL.host + "/new_user/");//"http://192.168.12.122:8002/new_user/"
                 break;
             default: break;
         }

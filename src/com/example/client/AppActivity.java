@@ -15,25 +15,39 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Created by kbushko on 12/31/13.
@@ -48,21 +62,27 @@ public class AppActivity extends Activity {
     String userName;
     String url;
     String versionName;
+    String date;
     Context context;
     Boolean alredyInstalled = false;
     Button actionButton;
+    GridLayout gridLayout;
+
+
+    private final String TIME_FORMATER = "HH:mm yyyy/MM/dd";
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIME_FORMATER);
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.app_layout);
+        setContentView(R.layout.application_layout);
 
         context = this;
 
         Intent intent = getIntent();
         image = (Bitmap)intent.getParcelableExtra("image");
-        ImageView imageView = (ImageView)findViewById(R.id.icon);
+        ImageView imageView = (ImageView)findViewById(R.id.imageView);
         name = intent.getStringExtra("name");
         path = intent.getStringExtra("path");
         description = intent.getStringExtra("description");
@@ -70,10 +90,18 @@ public class AppActivity extends Activity {
         userName = intent.getStringExtra("developer");
         versionName = intent.getStringExtra("versionName");
         url = intent.getStringExtra("url");
+        date = intent.getStringExtra("date");
 
-        Log.i("info"," Package name = " + packageName);
+        SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        try{
+            Date d = inputFormat.parse(date);
+            ((TextView)findViewById(R.id.date)).setText(simpleDateFormat.format(d));
+        }catch (ParseException e){
+            e.printStackTrace();
+        }
 
         android.content.pm.PackageManager mPm = getPackageManager();
+
         try {
             PackageInfo info = mPm.getPackageInfo(packageName, 0);
             alredyInstalled = info != null;
@@ -84,14 +112,13 @@ public class AppActivity extends Activity {
         if (image != null)
             imageView.setImageBitmap(image);
 
-        TextView tv_name = (TextView)findViewById(R.id.text1);
-        TextView tv_path = (TextView)findViewById(R.id.text2);
+        TextView tv_name = (TextView)findViewById(R.id.textView);
+        TextView tv_path = (TextView)findViewById(R.id.textView2);
         TextView tv_description = (TextView)findViewById(R.id.description);
         ((TextView)findViewById(R.id.userName)).setText(userName);
         ((TextView)findViewById(R.id.url)).setText(url);
         ((TextView)findViewById(R.id.versionName)).setText(versionName);
 
-        //RatingBar rating = (RatingBar)findViewById(R.id.ratingBar);
 
         actionButton = (Button)findViewById(R.id.action);
         if (alredyInstalled){
@@ -120,6 +147,22 @@ public class AppActivity extends Activity {
                 }
             }
         });
+
+        gridLayout = (GridLayout)findViewById(R.id.gridLayout);
+        addImageToGrid(null);
+        addImageToGrid(null);
+        addImageToGrid(null);
+        addImageToGrid(null);
+
+        //TestButton
+        ((Button)findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("info"," Run method [ get list of files ]");
+                String[] param = {"My Android"};
+                new GetResourcesFilesList().execute(param);
+            }
+        });
     }
 
     @Override
@@ -145,6 +188,25 @@ public class AppActivity extends Activity {
             cacheDir.mkdirs();
         return cacheDir.getAbsolutePath();
     }
+
+    /**********************************************************************************************/
+    private void addImageToGrid(Bitmap bitmap){
+        int c = gridLayout.getColumnCount();
+        ImageView imageView = new ImageView(this);
+        imageView.setImageResource(R.drawable.default_user_icon_profile);
+
+        GridLayout.LayoutParams param = new GridLayout.LayoutParams();
+        param.height = GridLayout.LayoutParams.WRAP_CONTENT;
+        param.width = GridLayout.LayoutParams.WRAP_CONTENT;
+        param.columnSpec = GridLayout.spec(c+1);
+        param.rowSpec = GridLayout.spec(0);
+        param.rightMargin = 5;
+        param.leftMargin = 5;
+        imageView.setLayoutParams(param);
+
+        gridLayout.addView(imageView);
+    }
+
     /**********************************************************************************************/
     /* open file */
     /**********************************************************************************************/
@@ -190,7 +252,6 @@ public class AppActivity extends Activity {
 
             try {
                 HttpResponse httpResponse = httpClient.execute(httpGet,httpContext);
-                //Log.i("info", httpResponse.getFirstHeader("Content-length").toString());
                 byte[] _file_ = EntityUtils.toByteArray(httpResponse.getEntity());
                 File f = new File(get_cache_path(), file[1]);
                 FileOutputStream fos = new FileOutputStream(f);
@@ -202,12 +263,67 @@ public class AppActivity extends Activity {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(f), "application/vnd.android.package-archive");
                 startActivity(intent);
-
             } catch (IOException e) {
                 e.printStackTrace();
             }
             return false;
         }
+    }
 
+    /**********************************************************************************************/
+    /* */
+    /**********************************************************************************************/
+    class GetResourcesFilesList extends AsyncTask<String, Void, Boolean> {
+        private String response = "Server does not response";
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            HttpParams httpParams = new BasicHttpParams();
+            HttpConnectionParams.setConnectionTimeout(httpParams,20000);
+            HttpConnectionParams.setSoTimeout(httpParams, 20000);
+
+            DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
+            HttpPost httpPost = new HttpPost(URL.host + "/res_files");
+            List<NameValuePair> nameValuePairList = new ArrayList<NameValuePair>();
+            nameValuePairList.add(new BasicNameValuePair("name",strings[0]));
+
+            try {
+                httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairList));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            HttpContext httpContext = new BasicHttpContext();
+            httpContext.setAttribute(ClientContext.COOKIE_STORE, SApplication.cookieStore);
+
+            try {
+                HttpResponse httpResponse = httpClient.execute(httpPost,httpContext);
+                HttpEntity httpEntity = httpResponse.getEntity();
+                response = EntityUtils.toString(httpEntity);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        }
+        @Override
+        protected void onPostExecute(Boolean result){
+            if (result){
+                try {
+                    JSONArray jsonArray = new JSONArray(response);
+                    JSONObject jsonObject = jsonArray.getJSONObject(0);
+                    String objectType = jsonObject.optString("model");
+                    objectType = objectType.substring(objectType.lastIndexOf("."));
+                    Log.i("info"," Object type = " + objectType);
+                    if (!objectType.isEmpty() && objectType.equals(".error")){
+
+                    }else{
+                        Log.i("info"," JSON Object = " + jsonObject.toString());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

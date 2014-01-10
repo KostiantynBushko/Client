@@ -71,6 +71,7 @@ public class AppStoreFragment extends Fragment {
     private static final String APP_URL = "url";
     private static final String DEVELOPER = "developer";
     private static final String VERSION_NAME = "versionname";
+    private static final String DATE_TIME = "date_time";
 
     private ListView listView;
 
@@ -157,6 +158,7 @@ public class AppStoreFragment extends Fragment {
                 String versionName = (String)object.get(VERSION_NAME);
                 String developer = (String)object.get(DEVELOPER);
                 String url = (String)object.get(APP_URL);
+                String date = (String)object.get(DATE_TIME);
 
 
                 Intent intent = new Intent(getActivity(), AppActivity.class);
@@ -168,6 +170,7 @@ public class AppStoreFragment extends Fragment {
                 intent.putExtra("versionName",versionName);
                 intent.putExtra("developer",developer);
                 intent.putExtra("url",url);
+                intent.putExtra("date",date);
 
                 startActivity(intent);
             }
@@ -237,6 +240,7 @@ public class AppStoreFragment extends Fragment {
                             resurce.put(DEVELOPER,App.opt("user"));
                             resurce.put(APP_URL,App.opt("url"));
                             resurce.put(VERSION_NAME,App.opt("versionName"));
+                            resurce.put(DATE_TIME,App.opt("date"));
                             listApp.add(resurce);
                             new DownloadImage(countItems++).execute(URL.host + "/app_image/?path=" + App.opt("path"));
                         }

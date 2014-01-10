@@ -7,6 +7,7 @@
     <string-array name="items">
         <item>Home page</item>
         <item>App Store</item>
+        <item>Test</item>
     </string-array>
 
     <string name="drawer_open">Open navigation drawer</string>

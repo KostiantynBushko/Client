@@ -32,7 +32,8 @@ public class NavigationDrawer extends FragmentActivity {
             "com.example.fragment.HomePageFragment",
             /*"com.example.fragment.FileExplorerFragment",*/
             /*"com.example.fragment.GMapFragment",*/
-            "com.example.fragment.AppStoreFragment"
+            "com.example.fragment.AppStoreFragment",
+            "com.example.fragment.TestFragment"
             /*"com.example.fragment.RestaurantList",
             "com.example.fragment.WebViewFragment"*/
     };

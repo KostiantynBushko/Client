@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.client.CardActivity;
 import com.example.client.MainActivity;
 import com.example.client.R;
 import com.example.client.SApplication;
@@ -119,6 +120,13 @@ public class HomePageFragment extends Fragment implements View.OnClickListener{
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getActivity(), UploadAppActivity.class);
+                startActivity(intent);
+            }
+        });
+        ((Button)root.findViewById(R.id.CardioButton)).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), CardActivity.class);
                 startActivity(intent);
             }
         });

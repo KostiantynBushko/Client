@@ -31,6 +31,9 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -98,7 +101,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }else{
-                    new LoginTask().execute(URL.host + "/login/");//"http://192.168.12.122:8002/login/"
+                    new LoginTask().execute(URL.host + "/login/");
                 }
                 break;
             case R.id.bRegistration:
@@ -132,6 +135,8 @@ public class LoginActivity extends Activity implements View.OnClickListener{
     class LoginTask extends AsyncTask<String, Void, Boolean> {
         private ProgressDialog progressDialog = null;
         boolean result = false;
+        JSONObject User;
+
         @Override
         protected void onPreExecute() {
             progressDialog = ProgressDialog.show(LoginActivity.this,"Is running"," please wait...",true);
@@ -176,6 +181,9 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 if (message.equals("Invalid login or password") || message.equals("Dissable account")){
                     result = false;
                 }else{
+                    JSONArray array = new JSONArray(message.toString());
+                    User = array.getJSONObject(0);
+                    User = User.getJSONObject("fields");
                     result = true;
                 }
 
@@ -183,6 +191,11 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 title = "Worning";
                 message = "Server doesn't response";
                 result = false;
+                e.printStackTrace();
+            } catch (JSONException e) {
+                result = false;
+                title = "Worning";
+                message = "Server doesn't response";
                 e.printStackTrace();
             }
 
@@ -200,6 +213,10 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             if (result == true) {
                 Log.i("info","Success login");
                 Intent intent = new Intent(getApplicationContext(), NavigationDrawer.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("first_name",User.optString("first_name"));
+                intent.putExtra("last_name",User.optString("last_name"));
+                intent.putExtra("username",User.optString("username"));
+                intent.putExtra("email",User.optString("email"));
                 startActivity(intent);
                 finish();
             }else{

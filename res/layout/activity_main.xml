@@ -16,27 +16,52 @@
             android:orientation="vertical"
             android:background="#ff7f7f7f"
             android:layout_gravity="start" >
-        <TextView
-                android:id="@+id/EditText01"
+
+        <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#ffcfcfcf"
-                android:textSize="30dp"
-                android:gravity="center"
-                android:layout_marginRight="3dp"
-                android:layout_marginTop="3dp"
-                android:layout_marginLeft="3dp"
-                android:hint="menu" >
-        </TextView>
+                android:layout_height="wrap_content">
+            <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ff545454">
+                <ImageView
+                        android:id="@+id/imageView"
+                        android:layout_width="100dp"
+                        android:layout_height="100dp"
+                        android:src="@drawable/default_user_icon_profile"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"/>
+                <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/imageView"
+                        android:layout_marginTop="2dp"
+                        android:text="name"
+                        android:gravity="center"
+                        android:textColor="#FFFFFF"/>
+                <TextView
+                        android:id="@+id/textView2"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/textView1"
+                        android:text="second name"
+                        android:layout_marginBottom="5dp"
+                        android:gravity="center"
+                        android:textColor="#FFFFFF"/>
+            </RelativeLayout>
+            </FrameLayout>
+
         <ListView android:id="@+id/left_drawer_list"
-                  android:layout_width="280dp"
+                  android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:choiceMode="singleChoice"
-                  android:divider="#ffa5a5a5"
+                  android:divider="#ff6a6a6a"
                   android:dividerHeight="1dp"
                   android:background="#ff7f7f7f"
-                  android:paddingLeft="15sp"
-                  android:paddingRight="15sp"/>
+                  android:paddingLeft="0sp"
+                  android:paddingRight="0sp"/>
     </LinearLayout>
 
 </android.support.v4.widget.DrawerLayout>

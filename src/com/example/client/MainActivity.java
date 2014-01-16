@@ -21,6 +21,9 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -79,6 +82,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     class ChecAuthentication extends AsyncTask<String, Void, Boolean> {
+        JSONObject User;
         @Override
         protected Boolean doInBackground(String... urlString) {
             SystemClock.sleep(1000);
@@ -98,14 +102,21 @@ public class MainActivity extends FragmentActivity {
                 HttpResponse httpResponse = httpClient.execute(httpPost, httpContext);
                 HttpEntity httpEntity = httpResponse.getEntity();
                 String message = EntityUtils.toString(httpEntity);
+
                 if (message.equals("Error")){
                     result = false;
                 }else{
                     result = true;
+                    JSONArray array = new JSONArray(message.toString());
+                    User = array.getJSONObject(0);
+                    User = User.getJSONObject("fields");
                 }
                 Log.i("info", message);
 
             } catch (IOException e) {
+                result = false;
+                e.printStackTrace();
+            } catch (JSONException e) {
                 result = false;
                 e.printStackTrace();
             }
@@ -118,6 +129,10 @@ public class MainActivity extends FragmentActivity {
             if (value){
                 Log.i("info","Success login");
                 Intent intent = new Intent(getApplicationContext(), NavigationDrawer.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intent.putExtra("first_name",User.optString("first_name"));
+                intent.putExtra("last_name",User.optString("last_name"));
+                intent.putExtra("username",User.optString("username"));
+                intent.putExtra("email",User.optString("email"));
                 startActivity(intent);
                 finish();
             }else {

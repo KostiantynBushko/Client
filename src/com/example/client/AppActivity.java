@@ -17,6 +17,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
@@ -67,7 +68,6 @@ public class AppActivity extends Activity {
     Boolean alredyInstalled = false;
     Button actionButton;
     GridLayout gridLayout;
-
 
     private final String TIME_FORMATER = "HH:mm yyyy/MM/dd";
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIME_FORMATER);
@@ -163,6 +163,10 @@ public class AppActivity extends Activity {
                 new GetResourcesFilesList().execute(param);
             }
         });
+        //Rating bar
+        RatingBar rb = (RatingBar)findViewById(R.id.ratingBar);
+        rb.setStepSize(1);
+
     }
 
     @Override
@@ -206,7 +210,6 @@ public class AppActivity extends Activity {
 
         gridLayout.addView(imageView);
     }
-
     /**********************************************************************************************/
     /* open file */
     /**********************************************************************************************/

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal|top">
+
+            <ImageView
+                    android:layout_width="105dp"
+                    android:layout_height="105dp"
+                    android:id="@+id/imageView"
+                    android:src="@drawable/app_icon"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginTop="10dp"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Large Text"
+                    android:id="@+id/textView"
+                    android:layout_alignTop="@+id/imageView"
+                    android:layout_toRightOf="@+id/imageView"
+                    android:layout_toLeftOf="@+id/textView3"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Small Text"
+                    android:id="@+id/textView2"
+                    android:layout_below="@+id/textView"
+                    android:layout_alignLeft="@+id/textView"
+                    android:layout_alignStart="@+id/textView"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="2dp"/>
+
+            <Button
+                    android:layout_width="100dp"
+                    android:layout_height="35dp"
+                    android:text="install"
+                    android:id="@+id/button"
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:textSize="15sp"
+                    android:textColor="#ffffffff"
+                    android:background="@drawable/button_rect"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginBottom="5dp"/>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="0"
+                    android:id="@+id/textView3"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginTop="2dp"/>
+
+        </RelativeLayout>
+    </FrameLayout>
+
+</LinearLayout>

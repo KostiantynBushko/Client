@@ -7,12 +7,14 @@
     <string-array name="items">
         <item>Home page</item>
         <item>App Store</item>
-        <item>Test</item>
+        <item>My applications</item>
     </string-array>
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
 
     <string name="app_id">1378486902404781</string>
+    <string name="drawer_open">open</string>
+    <string name="drawer_close">close</string>
 
 </resources>

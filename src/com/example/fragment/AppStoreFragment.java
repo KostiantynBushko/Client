@@ -77,12 +77,11 @@ public class AppStoreFragment extends Fragment {
 
     private int firstVisibleItem = 0;
     private int visibleCountItem = 0;
-
     boolean isRunning = false;
     LruCache<String, Bitmap> mMemoryCach;
-    boolean mShowingBack = false;
+
     ViewGroup root;
-    LoadContactTask loadContactTask;
+    LoadAppTask loadAppTask;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -118,7 +117,7 @@ public class AppStoreFragment extends Fragment {
 
         listView = (ListView)root.findViewById(R.id.listView);
         listView.setDivider(null);
-        listView.setDividerHeight(15);
+        listView.setDividerHeight(10);
         listApp = new ArrayList<HashMap<String, Object>>();
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -140,7 +139,7 @@ public class AppStoreFragment extends Fragment {
                 if (++firstVisible + visibleCount > totalCount && totalCount > 0){
                     if (!isRunning){
                         isRunning = true;
-                        new LoadContactTask().execute(URL.host + "/app_list/");
+                        new LoadAppTask().execute(URL.host + "/app_list/");
                     }
                 }
             }
@@ -175,21 +174,22 @@ public class AppStoreFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-        loadContactTask = new LoadContactTask();
-        loadContactTask.execute(URL.host + "/app_list/");
+        loadAppTask = new LoadAppTask();
+        loadAppTask.execute(URL.host + "/app_list/");
         super.onResume();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        loadContactTask.cancel(true);
+        loadAppTask.cancel(true);
     }
 
 
     /**********************************************************************************************/
-    class LoadContactTask extends AsyncTask<String, Void, Boolean> {
+    /* Load list application */
+    /**********************************************************************************************/
+    class LoadAppTask extends AsyncTask<String, Void, Boolean> {
         String response = "";
         @Override
         protected Boolean doInBackground(String... url) {
@@ -250,7 +250,7 @@ public class AppStoreFragment extends Fragment {
                                     new String[]{NAME,PATH,ICON,U_ID},
                                     new int[]{R.id.text1, R.id.text2,R.id.icon, R.id.u_id});
                             listView.setAdapter(adapter);
-                            listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+                            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
                         }else {
                             BaseAdapter adapter = (BaseAdapter)listView.getAdapter();
                             adapter.notifyDataSetChanged();
@@ -267,7 +267,8 @@ public class AppStoreFragment extends Fragment {
         }
     }
     /**********************************************************************************************/
-    /* Download image task */
+    /* Download image application task */
+    /**********************************************************************************************/
     class DownloadImage extends AsyncTask<String, Void, Bitmap> {
         int item = 0;
         Bitmap bitmap = null;
@@ -318,8 +319,9 @@ public class AppStoreFragment extends Fragment {
             }
         }
     }
-
-    /* open file */
+    /**********************************************************************************************/
+    /* Open file */
+    /**********************************************************************************************/
     class OpenFileTask extends AsyncTask<String, Void, Boolean> {
         ProgressDialog progressDialog = null;
         @Override

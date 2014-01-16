@@ -180,6 +180,17 @@
                     android:layout_marginTop="20dp"
                     android:background="@drawable/button_action"
                     android:textColor="#ff656565"/>
+            <Button
+                    android:id="@+id/CardioButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Card IO"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@drawable/button_action"
+                    />
         </LinearLayout>
 
     </ScrollView>

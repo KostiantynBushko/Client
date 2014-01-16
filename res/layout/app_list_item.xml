@@ -6,8 +6,6 @@
                 android:padding="5dip"
         android:background="@drawable/app_panel">
 
-    <!-- ListRow Left sied Thumbnail image -->
-
     <LinearLayout
             android:id="@+id/thumbnail"
             android:layout_width="wrap_content"
@@ -23,8 +21,6 @@
                 android:src="@drawable/app_icon" />
     </LinearLayout>
 
-    <!-- Title Of Song -->
-
     <TextView
             android:id="@+id/text1"
             android:layout_width="wrap_content"
@@ -34,9 +30,8 @@
             android:textSize="15dip"
             android:textStyle="bold"
             android:typeface="sans"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/thumbnail"
-            />
+            android:layout_below="@+id/u_id"
+            android:layout_toRightOf="@+id/thumbnail"/>
 
     <TextView
             android:id="@+id/text2"
@@ -45,19 +40,18 @@
             android:text="Just gona stand there and ..."
             android:textColor="#343434"
             android:textSize="10dip"
-            android:layout_alignBottom="@+id/imageView1"
-            android:layout_toRightOf="@+id/thumbnail"
-            android:layout_toLeftOf="@+id/imageView1"/>
-
-    <ImageView
-            android:id="@+id/imageView1"
+            android:layout_below="@+id/text1"
+            android:layout_alignLeft="@+id/text1"
+            android:layout_alignStart="@+id/text1"
+            android:layout_marginTop="5dp"/>
+    <RatingBar
+            android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/thumbnail"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/text1"
-            android:layout_marginRight="6dip"
-            android:src="@drawable/arrow"/>
+            android:layout_height="26dp"
+            android:layout_below="@+id/text2"
+            android:layout_toRightOf="@+id/thumbnail"
+            android:progressDrawable="@drawable/custom_rating_selector"
+            android:isIndicator="true"/>
 
     <TextView
             android:layout_width="wrap_content"
@@ -65,8 +59,7 @@
             android:text="0"
             android:id="@+id/u_id"
             android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/imageView1"
-            android:layout_marginRight="10dp"/>
-
+            android:layout_alignRight="@+id/text2"
+            android:layout_alignEnd="@+id/text2"/>
 
 </RelativeLayout>

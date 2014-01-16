@@ -86,7 +86,7 @@
             <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="v"
+                    android:text="version"
                     android:id="@+id/versionName"
                     android:layout_alignBottom="@+id/thumbnail"
                     android:layout_centerHorizontal="true"/>
@@ -99,7 +99,6 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/frameLayout">
-
 
         <RelativeLayout
                 android:layout_width="wrap_content"
@@ -156,11 +155,10 @@
                             android:background="@drawable/separate_line"
                             android:id="@+id/textView4"
                             android:layout_below="@+id/description"
-                            android:layout_alignParentLeft="true"
-                            android:layout_alignParentStart="true"
-                            android:layout_marginLeft="5dp"
                             android:layout_alignParentRight="true"
-                            android:layout_alignParentEnd="true"/>
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"/>
 
                     <TextView
                             android:layout_width="wrap_content"
@@ -179,8 +177,6 @@
                             android:text="User:"
                             android:id="@+id/textView5"
                             android:layout_below="@+id/textView4"
-                            android:layout_alignParentRight="true"
-                            android:layout_alignParentEnd="true"
                             android:layout_alignParentLeft="true"
                             android:layout_alignParentStart="true"/>
 
@@ -203,8 +199,8 @@
                             android:layout_below="@+id/userName"
                             android:layout_alignLeft="@+id/userName"
                             android:layout_alignStart="@+id/userName"
-                            android:layout_alignRight="@+id/description"
-                            android:layout_alignEnd="@+id/description"/>
+                            android:layout_alignRight="@+id/userName"
+                            android:layout_alignEnd="@+id/userName"/>
 
                     <TextView
                             android:layout_width="wrap_content"
@@ -219,7 +215,6 @@
                             android:layout_alignParentEnd="true"/>
 
                 </RelativeLayout>
-
         </RelativeLayout>
     </FrameLayout>
 

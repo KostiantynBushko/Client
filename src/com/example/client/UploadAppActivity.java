@@ -169,6 +169,8 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
             DefaultHttpClient httpClient = new DefaultHttpClient(httpParams);
             HttpPost httpPost = new HttpPost(param[0]);
 
+            File file = new File(filePath);
+            long size = file.length();
             List<NameValuePair>nameValuePairs = new ArrayList<NameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("appName",appName));
             nameValuePairs.add(new BasicNameValuePair("packageName",packageName));
@@ -176,6 +178,7 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
             nameValuePairs.add(new BasicNameValuePair("versionCode",versionCode));
             nameValuePairs.add(new BasicNameValuePair("description",description));
             nameValuePairs.add(new BasicNameValuePair("url",url));
+            nameValuePairs.add(new BasicNameValuePair("sizeByte",Long.toString(size)));
 
             try{
                 httpPost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
@@ -284,7 +287,7 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
     }
     /**********************************************************************************************/
     /**********************************************************************************************/
-    /* Upload image file  */
+    /* Upload application  */
     /**********************************************************************************************/
     class UploadApp extends AsyncTask<String, Void, Boolean> {
 
@@ -304,9 +307,6 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
             HttpContext loadContext = new BasicHttpContext();
             HttpPost httpPost = new HttpPost(url[0]);
 
-            //MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-            //builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-
             byte[] fileContext;
             File apk = new File(filePath);
             try {
@@ -321,12 +321,6 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
                 e.printStackTrace();
                 return false;
             }
-
-            /*builder.addPart("file", new ByteArrayBody(fileContext,"app.apk"));
-            builder.addTextBody("path",serverApkPath);*/
-
-            //HttpEntity httpEntity = builder.build();
-            //httpPost.setEntity(httpEntity);
 
             MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
             entity.addPart("file_name", new ByteArrayBody(fileContext, "app.apk" ));

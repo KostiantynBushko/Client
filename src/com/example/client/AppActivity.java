@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.apache.http.HttpEntity;
@@ -64,10 +65,13 @@ public class AppActivity extends Activity {
     String url;
     String versionName;
     String date;
+    int appId;
     Context context;
     Boolean alredyInstalled = false;
     Button actionButton;
     GridLayout gridLayout;
+    RelativeLayout ratingLayout;
+    RatingBar ratingBar;
 
     private final String TIME_FORMATER = "HH:mm yyyy/MM/dd";
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIME_FORMATER);
@@ -91,6 +95,7 @@ public class AppActivity extends Activity {
         versionName = intent.getStringExtra("versionName");
         url = intent.getStringExtra("url");
         date = intent.getStringExtra("date");
+        appId = intent.getIntExtra("appId",-1);
 
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         try{
@@ -118,7 +123,10 @@ public class AppActivity extends Activity {
         ((TextView)findViewById(R.id.userName)).setText(userName);
         ((TextView)findViewById(R.id.url)).setText(url);
         ((TextView)findViewById(R.id.versionName)).setText(versionName);
-
+        ((TextView)findViewById(R.id.textView3)).setText(Integer.toString(appId));
+        gridLayout = (GridLayout)findViewById(R.id.gridLayout);
+        ratingLayout = (RelativeLayout)findViewById(R.id.ratingLayout);
+        ratingBar = (RatingBar)findViewById(R.id.ratingBar);
 
         actionButton = (Button)findViewById(R.id.action);
         if (alredyInstalled){
@@ -132,7 +140,6 @@ public class AppActivity extends Activity {
         tv_name.setText(name);
         tv_path.setText(path);
         tv_description.setText(description);
-
 
         actionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,25 +155,14 @@ public class AppActivity extends Activity {
             }
         });
 
-        gridLayout = (GridLayout)findViewById(R.id.gridLayout);
         addImageToGrid(null);
         addImageToGrid(null);
         addImageToGrid(null);
         addImageToGrid(null);
 
-        //TestButton
-        ((Button)findViewById(R.id.button)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i("info"," Run method [ get list of files ]");
-                String[] param = {"My Android"};
-                new GetResourcesFilesList().execute(param);
-            }
-        });
-        //Rating bar
-        RatingBar rb = (RatingBar)findViewById(R.id.ratingBar);
-        rb.setStepSize(1);
-
+        if (!alredyInstalled){
+            ratingLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -272,7 +268,6 @@ public class AppActivity extends Activity {
             return false;
         }
     }
-
     /**********************************************************************************************/
     /* */
     /**********************************************************************************************/

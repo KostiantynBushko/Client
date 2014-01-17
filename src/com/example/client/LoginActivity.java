@@ -136,6 +136,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
         private ProgressDialog progressDialog = null;
         boolean result = false;
         JSONObject User;
+        int userId;
 
         @Override
         protected void onPreExecute() {
@@ -183,6 +184,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 }else{
                     JSONArray array = new JSONArray(message.toString());
                     User = array.getJSONObject(0);
+                    userId = User.getInt("pk");
                     User = User.getJSONObject("fields");
                     result = true;
                 }
@@ -209,7 +211,6 @@ public class LoginActivity extends Activity implements View.OnClickListener{
             progressDialog.dismiss();
             progressDialog.cancel();
 
-
             if (result == true) {
                 Log.i("info","Success login");
                 Intent intent = new Intent(getApplicationContext(), NavigationDrawer.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -217,6 +218,7 @@ public class LoginActivity extends Activity implements View.OnClickListener{
                 intent.putExtra("last_name",User.optString("last_name"));
                 intent.putExtra("username",User.optString("username"));
                 intent.putExtra("email",User.optString("email"));
+                intent.putExtra("userId",userId);
                 startActivity(intent);
                 finish();
             }else{

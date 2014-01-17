@@ -239,9 +239,6 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
             HttpContext loadContext = new BasicHttpContext();
             HttpPost httpPost = new HttpPost(url[0]);
 
-            //MultipartEntityBuilder builder = MultipartEntityBuilder.create();
-            //builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
-
             MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             iconBitmap.compress(Bitmap.CompressFormat.PNG, 20, bos);
@@ -255,12 +252,6 @@ public class UploadAppActivity extends Activity implements OpenFileDialog.onButt
             }
 
             httpPost.setEntity(entity);
-
-            /*builder.addPart("file", new ByteArrayBody(data, "image.png"));
-            builder.addTextBody("path",serverApkPath);
-
-            HttpEntity httpEntity = builder.build();
-            httpPost.setEntity(httpEntity);*/
 
             HttpContext httpContext = new BasicHttpContext();
             httpContext.setAttribute(ClientContext.COOKIE_STORE, SApplication.cookieStore);

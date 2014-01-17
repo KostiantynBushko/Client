@@ -69,7 +69,9 @@
                     android:text="0"
                     android:id="@+id/u_id"
                     android:layout_alignParentTop="true"
-                    android:layout_alignRight="@+id/text2"/>
+                    android:layout_alignRight="@+id/text2"
+                    android:layout_marginRight="5dp"
+                    android:textColor="#ffc6c6c6"/>
 
             <Button
                     android:layout_width="100dp"

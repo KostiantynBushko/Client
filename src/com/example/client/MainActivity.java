@@ -83,6 +83,7 @@ public class MainActivity extends FragmentActivity {
 
     class ChecAuthentication extends AsyncTask<String, Void, Boolean> {
         JSONObject User;
+        int userId;
         @Override
         protected Boolean doInBackground(String... urlString) {
             SystemClock.sleep(1000);
@@ -107,8 +108,11 @@ public class MainActivity extends FragmentActivity {
                     result = false;
                 }else{
                     result = true;
+                    Log.i("info","message = " + message);
                     JSONArray array = new JSONArray(message.toString());
                     User = array.getJSONObject(0);
+                    userId = User.getInt("pk");
+                    Log.i("info"," User ID = " + Integer.toString(userId));
                     User = User.getJSONObject("fields");
                 }
                 Log.i("info", message);
@@ -126,13 +130,14 @@ public class MainActivity extends FragmentActivity {
         @Override
         protected void onPostExecute(Boolean result) {
             boolean value = result.booleanValue();
-            if (value){
+            if (value) {
                 Log.i("info","Success login");
                 Intent intent = new Intent(getApplicationContext(), NavigationDrawer.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 intent.putExtra("first_name",User.optString("first_name"));
                 intent.putExtra("last_name",User.optString("last_name"));
                 intent.putExtra("username",User.optString("username"));
                 intent.putExtra("email",User.optString("email"));
+                intent.putExtra("userId",userId);
                 startActivity(intent);
                 finish();
             }else {

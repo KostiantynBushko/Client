@@ -18,9 +18,9 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.Toast;
 
+import com.example.adapter.AppItemAdapter;
 import com.example.client.AppActivity;
 import com.example.client.R;
 import com.example.client.SApplication;
@@ -56,7 +56,7 @@ import java.util.HashMap;
 public class AppStoreFragment extends Fragment {
 
     private final int GET_ITEM_LIMIT = 6;
-    private JSONArray contacts;
+    private JSONArray appArray;
     private int offset = 0;
     private int limit = GET_ITEM_LIMIT;
     private int countItems = 0;
@@ -72,6 +72,8 @@ public class AppStoreFragment extends Fragment {
     private static final String DEVELOPER = "developer";
     private static final String VERSION_NAME = "versionname";
     private static final String DATE_TIME = "date_time";
+    private static final String APP_ID = "appId";
+    private static final String APP_RATING = "app_rating";
 
     private ListView listView;
 
@@ -148,6 +150,8 @@ public class AppStoreFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int item, long l) {
+                if (listApp.isEmpty())
+                    return;
                 HashMap<String, Object>object = listApp.get(item);
                 Bitmap image = getBitmapFromMemCache(Integer.toString(item));
                 String name = (String)object.get(NAME);
@@ -158,6 +162,8 @@ public class AppStoreFragment extends Fragment {
                 String developer = (String)object.get(DEVELOPER);
                 String url = (String)object.get(APP_URL);
                 String date = (String)object.get(DATE_TIME);
+                Integer appId = (Integer)object.get(APP_ID);
+                Integer rating = (Integer)object.get(APP_RATING);
 
 
                 Intent intent = new Intent(getActivity(), AppActivity.class);
@@ -170,6 +176,8 @@ public class AppStoreFragment extends Fragment {
                 intent.putExtra("developer",developer);
                 intent.putExtra("url",url);
                 intent.putExtra("date",date);
+                intent.putExtra("appId",appId);
+                intent.putExtra("total_rating",rating);
 
                 startActivity(intent);
             }
@@ -221,15 +229,18 @@ public class AppStoreFragment extends Fragment {
             if (result){
                 JSONObject App;
                 try {
-                    contacts = new JSONArray(response.toString());
+                    appArray = new JSONArray(response.toString());
                     HashMap<String, Object>resurce;
                     int id = offset;
-                    Log.i("info", " contact length = " + Integer.toString(contacts.length()));
-                    if (contacts.length() > 0){
-                        offset += contacts.length();
-                        for (int i = 0; i< contacts.length(); i++) {
-                            App = contacts.getJSONObject(i);
+                    Log.i("info", " contact length = " + Integer.toString(appArray.length()));
+                    if (appArray.length() > 0){
+                        offset += appArray.length();
+                        for (int i = 0; i< appArray.length(); i++) {
+                            App = appArray.getJSONObject(i);
+                            Log.i("info","app = " + App.toString());
+                            int appId = App.optInt("pk");
                             App = App.getJSONObject("fields");
+
                             resurce = new HashMap<String, Object>();
                             resurce.put(NAME,App.opt("name"));
                             resurce.put(PATH, App.opt("path"));
@@ -241,14 +252,20 @@ public class AppStoreFragment extends Fragment {
                             resurce.put(APP_URL,App.opt("url"));
                             resurce.put(VERSION_NAME,App.opt("versionName"));
                             resurce.put(DATE_TIME,App.opt("date"));
+                            resurce.put(APP_ID,appId);
+                            resurce.put(APP_RATING,App.optInt("total_rating"));
                             listApp.add(resurce);
                             new DownloadImage(countItems++).execute(URL.host + "/app_image/?path=" + App.opt("path"));
                         }
 
                         if (listView.getAdapter() == null) {
-                            SimpleAdapter adapter = new SimpleAdapter(getActivity(), listApp,R.layout.app_list_item,
+
+                            /*SimpleAdapter adapter = new SimpleAdapter(getActivity(), listApp,R.layout.app_list_item,
                                     new String[]{NAME,PATH,ICON,U_ID},
                                     new int[]{R.id.text1, R.id.text2,R.id.icon, R.id.u_id});
+                            listView.setAdapter(adapter);
+                            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);*/
+                            AppItemAdapter adapter = new AppItemAdapter(getActivity(),listApp);
                             listView.setAdapter(adapter);
                             listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
                         }else {

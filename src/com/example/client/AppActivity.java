@@ -66,12 +66,19 @@ public class AppActivity extends Activity {
     String versionName;
     String date;
     int appId;
+    long downloads;
+    long size;
+    long rating;
+
     Context context;
     Boolean alredyInstalled = false;
     Button actionButton;
     GridLayout gridLayout;
     RelativeLayout ratingLayout;
     RatingBar ratingBar;
+
+    private final int INSTALL_APPLICATION = 1001;
+    private final int UNINSTALL_APPLICATION = 1002;
 
     private final String TIME_FORMATER = "HH:mm yyyy/MM/dd";
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat(TIME_FORMATER);
@@ -96,6 +103,9 @@ public class AppActivity extends Activity {
         url = intent.getStringExtra("url");
         date = intent.getStringExtra("date");
         appId = intent.getIntExtra("appId",-1);
+        size = intent.getLongExtra("size", 0);
+        downloads = intent.getLongExtra("downloads", 0);
+        rating = intent.getLongExtra("total_rating", 0);
 
         SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         try{
@@ -124,6 +134,18 @@ public class AppActivity extends Activity {
         ((TextView)findViewById(R.id.url)).setText(url);
         ((TextView)findViewById(R.id.versionName)).setText(versionName);
         ((TextView)findViewById(R.id.textView3)).setText(Integer.toString(appId));
+        ((TextView)findViewById(R.id.downloads)).setText(Long.toString(downloads));
+
+        double dSize = size;
+        String strSize = String.format("%.0f",dSize) + " B";
+        if (dSize > 2048){
+            dSize = dSize / 1024;
+            strSize = String.format("%.1f",dSize)+ " Kb";
+        }
+        if (dSize > 2048)
+            strSize = String.format("%.2f",dSize/1024) + " Mb";
+        ((TextView)findViewById(R.id.appSize)).setText(strSize);
+
         gridLayout = (GridLayout)findViewById(R.id.gridLayout);
         ratingLayout = (RelativeLayout)findViewById(R.id.ratingLayout);
         ratingBar = (RatingBar)findViewById(R.id.ratingBar);
@@ -147,7 +169,7 @@ public class AppActivity extends Activity {
                 if (alredyInstalled){
                     Uri uri = Uri.parse("package:"+packageName);
                     Intent intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE, uri);
-                    startActivity(intent);
+                    startActivityForResult(intent, UNINSTALL_APPLICATION);
                 }else {
                     String[] param = {path,name};
                     new OpenFileTask(context).execute(param);
@@ -163,16 +185,32 @@ public class AppActivity extends Activity {
         if (!alredyInstalled){
             ratingLayout.setVisibility(View.GONE);
         }
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float value, boolean b) {
+                Log.i("info","Rate = " + Float.toString(value));
+            }
+        });
     }
 
     @Override
     public void onResume(){
         super.onResume();
-        if (alredyInstalled){
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == INSTALL_APPLICATION) {
+            alredyInstalled = true;
             actionButton.setText("uninstall");
             actionButton.setBackgroundResource(R.drawable.button_rect_red);
-        }else{
+            ratingLayout.setVisibility(View.VISIBLE);
+            ratingBar.setRating(0);
+        }else if(requestCode == UNINSTALL_APPLICATION) {
+            alredyInstalled = false;
             actionButton.setText("install");
+            actionButton.setBackgroundResource(R.drawable.button_rect);
+            ratingLayout.setVisibility(View.GONE);
         }
     }
 
@@ -261,7 +299,7 @@ public class AppActivity extends Activity {
                 System.arraycopy(_file_, 0, newByte, 0, 15);
                 Intent intent = new Intent(Intent.ACTION_VIEW);
                 intent.setDataAndType(Uri.fromFile(f), "application/vnd.android.package-archive");
-                startActivity(intent);
+                startActivityForResult(intent, INSTALL_APPLICATION);
             } catch (IOException e) {
                 e.printStackTrace();
             }

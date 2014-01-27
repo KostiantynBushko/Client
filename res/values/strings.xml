@@ -16,5 +16,11 @@
     <string name="app_id">1378486902404781</string>
     <string name="drawer_open">open</string>
     <string name="drawer_close">close</string>
+    <string name="description">Description:</string>
+    <string name="user">User:</string>
+    <string name="screens">Screens:</string>
+    <string name="published">Published:</string>
+    <string name="downloads">Downloads:</string>
+    <string name="rate_this_app">Rate this application</string>
 
 </resources>

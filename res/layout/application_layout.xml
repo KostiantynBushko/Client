@@ -134,18 +134,47 @@
                     android:layout_below="@+id/description"
                     android:background="@drawable/separate_line"/>
             <TextView
+                    android:id="@+id/textDownloads"
+                    android:text="@string/downloads"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/separate2"/>
+            <TextView
+                    android:id="@+id/downloads"
+                    android:text="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@+id/textDownloads"
+                    android:layout_below="@+id/separate2"
+                    android:layout_marginLeft="10dp"/>
+            <TextView
+                    android:text="size"
+                    android:id="@+id/appSize"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/separate2"
+                    android:layout_marginRight="5dp"
+                    android:gravity="end"
+                    android:layout_alignParentRight="true"/>
+            <TextView
+                    android:id="@+id/separate21"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textDownloads"
+                    android:background="@drawable/separate_line"/>
+            <TextView
                     android:id="@+id/user_title"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:layout_below="@+id/separate2"
+                    android:layout_below="@+id/separate21"
                     android:text="User:"
                     android:layout_alignRight="@+id/textView4"
                     android:layout_alignEnd="@+id/textView4"/>
             <TextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_below="@+id/separate2"
+                    android:layout_below="@+id/separate21"
                     android:text="Published:"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:layout_alignLeft="@+id/textView4"/>
@@ -157,7 +186,6 @@
                     android:layout_height="match_parent"
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="10dp"
-                    android:layout_marginBottom="5dp"
                     android:layout_marginLeft="10dp"
                     android:layout_toLeftOf="@+id/textView4"
                     android:layout_alignParentLeft="true"
@@ -191,7 +219,6 @@
                     android:layout_marginTop="5dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginLeft="10dp"
-                    android:layout_marginBottom="5dp"
                     android:textColor="#ff7f7f7f"/>
             <TextView
                     android:id="@+id/separate3"
@@ -232,14 +259,16 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/separate4"
-                    android:visibility="visible">
+                    android:visibility="visible"
+                    android:background="#ffe1d9ff">
                 <TextView
                         android:id="@+id/rateTheApp"
-                        android:text="Rate this app"
+                        android:text="@string/rate_this_app"
                         android:gravity="center"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:textColor="#ff7f7f7f"
+                        android:layout_marginTop="5dp"
                         android:textAppearance="?android:attr/textAppearanceMedium"/>
                 <RatingBar
                         android:id="@+id/ratingBar"
@@ -251,13 +280,14 @@
                         android:progressDrawable="@drawable/rating_bar_large_stars"
                         android:layout_marginTop="8dp"
                         android:layout_centerHorizontal="true"/>
-                <TextView
-                        android:id="@+id/separate5"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/separate_line"
-                        android:layout_below="@+id/ratingBar"/>
             </RelativeLayout>
+            <TextView
+                    android:id="@+id/separate5"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/separate_line"
+                    android:layout_below="@+id/ratingLayout"
+                    android:layout_marginBottom="10dp"/>
 
         </RelativeLayout>
     </ScrollView>

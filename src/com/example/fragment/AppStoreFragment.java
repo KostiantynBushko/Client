@@ -74,6 +74,8 @@ public class AppStoreFragment extends Fragment {
     private static final String DATE_TIME = "date_time";
     private static final String APP_ID = "appId";
     private static final String APP_RATING = "app_rating";
+    private static final String APP_SIZE = "app_size";
+    private static final String APP_DOWNLOADS_COUNT = "downloads";
 
     private ListView listView;
 
@@ -163,8 +165,9 @@ public class AppStoreFragment extends Fragment {
                 String url = (String)object.get(APP_URL);
                 String date = (String)object.get(DATE_TIME);
                 Integer appId = (Integer)object.get(APP_ID);
-                Integer rating = (Integer)object.get(APP_RATING);
-
+                Long rating = (Long)object.get(APP_RATING);
+                Long size = (Long)object.get(APP_SIZE);
+                Long downloads = (Long)object.get(APP_DOWNLOADS_COUNT);
 
                 Intent intent = new Intent(getActivity(), AppActivity.class);
                 intent.putExtra("image",image);
@@ -178,6 +181,8 @@ public class AppStoreFragment extends Fragment {
                 intent.putExtra("date",date);
                 intent.putExtra("appId",appId);
                 intent.putExtra("total_rating",rating);
+                intent.putExtra("size",size);
+                intent.putExtra("downloads",downloads);
 
                 startActivity(intent);
             }
@@ -253,7 +258,9 @@ public class AppStoreFragment extends Fragment {
                             resurce.put(VERSION_NAME,App.opt("versionName"));
                             resurce.put(DATE_TIME,App.opt("date"));
                             resurce.put(APP_ID,appId);
-                            resurce.put(APP_RATING,App.optInt("total_rating"));
+                            resurce.put(APP_RATING,App.optLong("total_rating"));
+                            resurce.put(APP_SIZE,App.optLong("size"));
+                            resurce.put(APP_DOWNLOADS_COUNT,App.optLong("downloads"));
                             listApp.add(resurce);
                             new DownloadImage(countItems++).execute(URL.host + "/app_image/?path=" + App.opt("path"));
                         }
